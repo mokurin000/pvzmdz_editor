@@ -21,7 +21,7 @@ class GameDataError implements Exception {
 /// ShopItem
 /// =========================
 
-@JsonEnum(alwaysCreate: true)
+@JsonEnum(alwaysCreate: true, valueField: 'value')
 enum ShopItem {
   initialSun(0, '初始阳光'),
   catFood(1, '猫粮'),
@@ -48,23 +48,13 @@ enum ShopItem {
       orElse: () => throw GameDataError('无效的商店物品ID: $value'),
     );
   }
-
-  int toJson() => value;
-
-  static ShopItem fromJson(dynamic json) {
-    if (json is! int) {
-      throw GameDataError('商店物品必须为整数，实际为: ${json.runtimeType}');
-    }
-
-    return fromValue(json);
-  }
 }
 
 /// =========================
 /// Difficulty
 /// =========================
 
-@JsonEnum(alwaysCreate: true)
+@JsonEnum(alwaysCreate: true, valueField: 'value')
 enum DifficultyT {
   normal(0, '正常'),
   easy(1, '简单'),
@@ -81,48 +71,6 @@ enum DifficultyT {
       orElse: () => throw GameDataError('无效的游戏难度值: $value'),
     );
   }
-
-  int toJson() => value;
-
-  static DifficultyT fromJson(dynamic json) {
-    if (json is! int) {
-      throw GameDataError('游戏难度必须为整数，实际为: ${json.runtimeType}');
-    }
-
-    return fromValue(json);
-  }
-}
-
-/// =========================
-/// Converter
-/// =========================
-
-class ShopItemConverter implements JsonConverter<ShopItem, int> {
-  const ShopItemConverter();
-
-  @override
-  ShopItem fromJson(int json) {
-    return ShopItem.fromJson(json);
-  }
-
-  @override
-  int toJson(ShopItem object) {
-    return object.toJson();
-  }
-}
-
-class DifficultyConverter implements JsonConverter<DifficultyT, int> {
-  const DifficultyConverter();
-
-  @override
-  DifficultyT fromJson(int json) {
-    return DifficultyT.fromJson(json);
-  }
-
-  @override
-  int toJson(DifficultyT object) {
-    return object.toJson();
-  }
 }
 
 /// =========================
@@ -133,7 +81,7 @@ class DifficultyConverter implements JsonConverter<DifficultyT, int> {
 class GameData {
   final List<int> scores;
 
-  @ShopItemConverter()
+  @JsonKey(unknownEnumValue: null)
   final List<ShopItem> shangdian;
 
   final List<bool> shangdianYishou;
@@ -141,80 +89,45 @@ class GameData {
   final List<int> scores2;
 
   final double music;
-
   final double sf;
 
-  @DifficultyConverter()
+  @JsonKey(unknownEnumValue: null)
   final DifficultyT Difficulty;
 
   final int Maoxian;
-
   final int MaoxianIFA;
-
   final int MaoxianSnow;
-
   final int heng;
-
   final int shu;
-
   final bool quanping;
-
   final bool chuizhitongbu;
-
   final bool pingban;
-
   final int wujinceng;
-
   final int wujinceng2;
-
   final int wujinceng2Last;
-
   final int wujinceng3;
-
   final bool kcZheDang;
-
   final bool hpShow;
-
   final bool treeVanishOff;
-
   final int coin;
-
   final int chushisun;
-
   final int maoliang;
-
   final int coinYingtao;
-
   final int sunPokeCishu;
-
   final int zmPokeCishu;
-
   final int tianjianglihe;
-
   final int touzi;
-
   final int touzi2;
-
   final bool liekabao;
-
   final bool ptkabao;
-
   final bool xykabao;
-
   final bool sskabao;
-
   final bool canbaohusan;
-
   final List<int> shangdianyigong;
-
   final List<int> pospos;
-
   final List<int> dates;
-
   final List<String> playerNames;
-
   final List<int> CustomZombieList;
-
   final List<int> CustomSpawnNumber;
 
   const GameData({

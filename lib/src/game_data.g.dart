@@ -11,7 +11,7 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) => GameData(
       .map((e) => (e as num).toInt())
       .toList(),
   shangdian: (json['shangdian'] as List<dynamic>)
-      .map((e) => const ShopItemConverter().fromJson((e as num).toInt()))
+      .map((e) => $enumDecode(_$ShopItemEnumMap, e))
       .toList(),
   shangdianYishou: (json['shangdianYishou'] as List<dynamic>)
       .map((e) => e as bool)
@@ -21,9 +21,7 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) => GameData(
       .toList(),
   music: (json['music'] as num).toDouble(),
   sf: (json['sf'] as num).toDouble(),
-  Difficulty: const DifficultyConverter().fromJson(
-    (json['Difficulty'] as num).toInt(),
-  ),
+  Difficulty: $enumDecode(_$DifficultyTEnumMap, json['Difficulty']),
   Maoxian: (json['Maoxian'] as num).toInt(),
   MaoxianIFA: (json['MaoxianIFA'] as num).toInt(),
   MaoxianSnow: (json['MaoxianSnow'] as num).toInt(),
@@ -75,14 +73,12 @@ GameData _$GameDataFromJson(Map<String, dynamic> json) => GameData(
 
 Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
   'scores': instance.scores,
-  'shangdian': instance.shangdian
-      .map(const ShopItemConverter().toJson)
-      .toList(),
+  'shangdian': instance.shangdian.map((e) => _$ShopItemEnumMap[e]!).toList(),
   'shangdianYishou': instance.shangdianYishou,
   'scores2': instance.scores2,
   'music': instance.music,
   'sf': instance.sf,
-  'Difficulty': const DifficultyConverter().toJson(instance.Difficulty),
+  'Difficulty': _$DifficultyTEnumMap[instance.Difficulty]!,
   'Maoxian': instance.Maoxian,
   'MaoxianIFA': instance.MaoxianIFA,
   'MaoxianSnow': instance.MaoxianSnow,
@@ -121,23 +117,23 @@ Map<String, dynamic> _$GameDataToJson(GameData instance) => <String, dynamic>{
 };
 
 const _$ShopItemEnumMap = {
-  ShopItem.initialSun: 'initialSun',
-  ShopItem.catFood: 'catFood',
-  ShopItem.cherryBomb: 'cherryBomb',
-  ShopItem.sunSpiritBall: 'sunSpiritBall',
-  ShopItem.zombieSpiritBall: 'zombieSpiritBall',
-  ShopItem.skyGiftBox: 'skyGiftBox',
-  ShopItem.investment: 'investment',
-  ShopItem.currencyInvestment: 'currencyInvestment',
-  ShopItem.randomBadPack: 'randomBadPack',
-  ShopItem.brokenLeafUmbrella: 'brokenLeafUmbrella',
-  ShopItem.randomNormalPack: 'randomNormalPack',
-  ShopItem.randomRarePack: 'randomRarePack',
-  ShopItem.randomEpicPack: 'randomEpicPack',
+  ShopItem.initialSun: 0,
+  ShopItem.catFood: 1,
+  ShopItem.cherryBomb: 2,
+  ShopItem.sunSpiritBall: 3,
+  ShopItem.zombieSpiritBall: 4,
+  ShopItem.skyGiftBox: 5,
+  ShopItem.investment: 6,
+  ShopItem.currencyInvestment: 7,
+  ShopItem.randomBadPack: 8,
+  ShopItem.brokenLeafUmbrella: 9,
+  ShopItem.randomNormalPack: 10,
+  ShopItem.randomRarePack: 11,
+  ShopItem.randomEpicPack: 12,
 };
 
 const _$DifficultyTEnumMap = {
-  DifficultyT.normal: 'normal',
-  DifficultyT.easy: 'easy',
-  DifficultyT.hard: 'hard',
+  DifficultyT.normal: 0,
+  DifficultyT.easy: 1,
+  DifficultyT.hard: 2,
 };
