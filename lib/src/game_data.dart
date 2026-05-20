@@ -175,8 +175,59 @@ class GameData {
     required this.CustomSpawnNumber,
   });
 
+  /// default savedata
+  factory GameData.defaultData() {
+    return GameData.fromJson({
+      "scores": [0, 1, 5],
+      "shangdian": [],
+      "shangdianYishou": [],
+      "shangdianyigong": [],
+      "scores2": [],
+      "pospos": [],
+      "dates": [],
+      "playerNames": ["MiaoDouziHaToTeMoIIDesu"],
+      "music": 0.3,
+      "sf": 0.3,
+      "CustomZombieList": [0, 1],
+      "CustomSpawnNumber": [1, 2, 3, 4, 8, 10],
+      "Difficulty": 0,
+      "Maoxian": 0,
+      "MaoxianIFA": 0,
+      "MaoxianSnow": 0,
+      "heng": 1280,
+      "shu": 720,
+      "quanping": false,
+      "chuizhitongbu": true,
+      "pingban": false,
+      "wujinceng": 0,
+      "wujinceng2": 0,
+      "wujinceng3": 0,
+      "wujinceng2Last": 0,
+      "kcZheDang": false,
+      "hpShow": false,
+      "treeVanishOff": false,
+      "coin": 0,
+      "chushisun": 0,
+      "maoliang": 0,
+      "coinYingtao": 0,
+      "sunPokeCishu": 0,
+      "zmPokeCishu": 0,
+      "tianjianglihe": 0,
+      "touzi": 0,
+      "touzi2": 0,
+      "liekabao": false,
+      "ptkabao": false,
+      "xykabao": false,
+      "sskabao": false,
+      "canbaohusan": false,
+    });
+  }
+
   factory GameData.fromJson(Map<String, dynamic> json) =>
       _$GameDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$GameDataToJson(this);
+
+  /// validate shop item count
+  bool get isValidShop => shangdian.isEmpty || shangdian.length == 6;
 }
