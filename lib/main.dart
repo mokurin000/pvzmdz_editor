@@ -1,21 +1,36 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 import 'package:logger/logger.dart';
 
 import 'package:pvzmdz_editor/platform_io/io.dart';
+import 'package:pvzmdz_editor/src/game_data.dart';
 
 final logfilter = DevelopmentFilter();
+final logger = Logger(filter: logfilter);
 
 void main() {
   runApp(const MainApp());
 }
 
-Future<void> readSaveData() async {
+Future<void> operateSaveData() async {
   logfilter.level = Level.info;
-  final logger = Logger(filter: logfilter);
 
   String? gameData = await readGameSaveData();
-  logger.i(gameData);
+
+  final GameData gameDataModel;
+  if (gameData != null) {
+    gameDataModel = GameData.fromJson(jsonDecode(gameData));
+  } else {
+    gameDataModel = GameData.defaultData();
+  }
+
+  logger.i(gameDataModel.chuizhitongbu);
+  final GameData noAntiCheat = gameDataModel.copyWith(chuizhitongbu: false);
+  logger.i(noAntiCheat.chuizhitongbu);
+
+  await writeGameSaveData(jsonEncode(noAntiCheat.toJson()));
 }
 
 class MainApp extends StatelessWidget {
@@ -23,7 +38,7 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    readSaveData();
+    operateSaveData();
 
     return MaterialApp(
       home: Scaffold(
