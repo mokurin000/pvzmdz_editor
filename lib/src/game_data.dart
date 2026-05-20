@@ -4,10 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'game_data.g.dart';
 
-/// =========================
-/// Error
-/// =========================
-
+/// 存档相关错误
 class GameDataError implements Exception {
   final String message;
 
