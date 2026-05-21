@@ -154,7 +154,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
                 key: _formKey,
                 child: LayoutBuilder(
                   builder: (context, constraints) {
-                    if (constraints.maxWidth >= 960) {
+                    if (constraints.maxWidth / 1.35 > constraints.maxHeight) {
                       return _DesktopSaveEditorPage(
                         chushisunCard: ChushisunCard(
                           controller: _chushisunCtrl,
@@ -381,79 +381,77 @@ class _DesktopSaveEditorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Scrollbar(
-        thumbVisibility: true,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1320),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: _DesktopPanel(
-                    title: '核心编辑',
-                    subtitle: '围绕数值修改和保存操作',
-                    children: [
-                      chushisunCard,
-                      const SizedBox(height: 16),
-                      _SectionHeader(title: '金币与投资'),
-                      const SizedBox(height: 12),
-                      _TwoColumnFields(
-                        first: _NumberField(
-                          label: '金币数量',
-                          controller: coinController,
-                        ),
-                        second: _NumberField(
-                          label: '投资次数',
-                          controller: touziController,
-                        ),
+      child: ListView(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 4,
+                child: _DesktopPanel(
+                  title: '核心编辑',
+                  subtitle: '围绕数值修改和保存操作',
+                  children: [
+                    chushisunCard,
+                    const SizedBox(height: 16),
+                    _SectionHeader(title: '金币与投资'),
+                    const SizedBox(height: 12),
+                    _TwoColumnFields(
+                      first: _NumberField(
+                        label: '金币数量',
+                        controller: coinController,
                       ),
-                      const SizedBox(height: 12),
-                      _TwoColumnFields(
-                        first: _NumberField(
-                          label: '货币投资次数',
-                          controller: touzi2Controller,
-                        ),
-                        second: const SizedBox.shrink(),
+                      second: _NumberField(
+                        label: '投资次数',
+                        controller: touziController,
                       ),
-                      const SizedBox(height: 16),
-                      _SectionHeader(title: '道具剩余次数'),
-                      const SizedBox(height: 12),
-                      _TwoColumnFields(
-                        first: _NumberField(
-                          label: '樱桃炸弹',
-                          controller: coinYingtaoController,
-                        ),
-                        second: _NumberField(
-                          label: '阳光精灵球',
-                          controller: sunPokeController,
-                        ),
+                      third: _NumberField(
+                        label: '货币投资次数',
+                        controller: touzi2Controller,
                       ),
-                      const SizedBox(height: 12),
-                      _TwoColumnFields(
-                        first: _NumberField(
-                          label: '僵尸精灵球',
-                          controller: zmPokeController,
-                        ),
-                        second: _NumberField(
-                          label: '天降礼盒',
-                          controller: tianjiangController,
-                        ),
+                      fourth: const SizedBox.shrink(),
+                    ),
+                    const SizedBox(height: 16),
+                    _SectionHeader(title: '道具剩余次数'),
+                    const SizedBox(height: 12),
+                    _TwoColumnFields(
+                      first: _NumberField(
+                        label: '樱桃炸弹',
+                        controller: coinYingtaoController,
                       ),
-                      const SizedBox(height: 20),
-                      _ActionButtons(
-                        onUnlockAllPlants: onUnlockAllPlants,
-                        onSave: onSave,
+                      second: _NumberField(
+                        label: '阳光精灵球',
+                        controller: sunPokeController,
                       ),
-                    ],
-                  ),
+                      third: _NumberField(
+                        label: '僵尸精灵球',
+                        controller: zmPokeController,
+                      ),
+                      fourth: _NumberField(
+                        label: '天降礼盒',
+                        controller: tianjiangController,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                flex: 2,
+                child: _DesktopPanel(
+                  title: '操作区',
+                  subtitle: '快捷操作',
+                  children: [
+                    _ActionButtons(
+                      onUnlockAllPlants: onUnlockAllPlants,
+                      onSave: onSave,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ),
+        ],
       ),
     );
   }
@@ -486,12 +484,7 @@ class _DesktopPanel extends StatelessWidget {
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 6),
-            Text(
-              subtitle,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.black54),
-            ),
+            Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 20),
             ...children,
           ],
@@ -512,11 +505,7 @@ class _DesktopSummaryCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF7F9FC),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE4EAF2)),
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -552,7 +541,7 @@ class _ActionButtons extends StatelessWidget {
               side: const BorderSide(color: Colors.blueAccent),
               minimumSize: const Size.fromHeight(54),
             ),
-            child: const Text('一键解锁全部植物'),
+            child: const Text('解锁全卡'),
           ),
         ),
         const SizedBox(width: 12),
@@ -589,10 +578,17 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _TwoColumnFields extends StatelessWidget {
-  const _TwoColumnFields({required this.first, required this.second});
+  const _TwoColumnFields({
+    required this.first,
+    required this.second,
+    this.third,
+    this.fourth,
+  });
 
   final Widget first;
   final Widget second;
+  final Widget? third;
+  final Widget? fourth;
 
   @override
   Widget build(BuildContext context) {
@@ -601,6 +597,14 @@ class _TwoColumnFields extends StatelessWidget {
         Expanded(child: first),
         const SizedBox(width: 12),
         Expanded(child: second),
+        if (third != null) ...[
+          const SizedBox(width: 12),
+          Expanded(child: third!),
+        ],
+        if (fourth != null) ...[
+          const SizedBox(width: 12),
+          Expanded(child: fourth!),
+        ],
       ],
     );
   }
