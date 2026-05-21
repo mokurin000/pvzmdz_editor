@@ -52,6 +52,7 @@ class WindowsPlatform extends IOApi {
   @override
   Future<void> writeGameSaveData(String gameData) async {
     try {
+      await io.Directory(gameDataDir).create(recursive: true);
       await io.File(gameDataPath).writeAsString(gameData);
     } on io.PathAccessException catch (error, stackTrace) {
       logger.e(
