@@ -52,6 +52,9 @@ jobs:
       - name: 📥 Get dependencies
         run: flutter pub get
 
+      - name: 🚧 Codegen
+        run: dart run build_runner build
+
       - name: 🏗️ Build APKs
         run: flutter build apk --release --split-per-abi --target-platform android-arm64,android-x64
 
