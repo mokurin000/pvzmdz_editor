@@ -83,6 +83,16 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
     setState(() => _data = newData);
   }
 
+  void _unlockAllPlants() {
+    setState(() {
+      _data = _data.copyWith(scores: allPlantScores);
+    });
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('已解锁全部植物')));
+  }
+
   @override
   void dispose() {
     _chushisunCtrl.dispose();
@@ -212,6 +222,26 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
                 ),
 
                 const SizedBox(height: 40),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: OutlinedButton(
+                    onPressed: _unlockAllPlants,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.blueAccent,
+                      side: const BorderSide(color: Colors.blueAccent),
+                      textStyle: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: const Text(
+                      '一键解锁全部植物',
+                      style: TextStyle(fontFamily: "Microsoft YaHei UI"),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   height: 56,
