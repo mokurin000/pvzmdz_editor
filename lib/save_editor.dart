@@ -99,7 +99,16 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
 
     setState(() => _data = newData);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('存档修改成功！'), backgroundColor: Colors.green),
+      SnackBar(
+        content: Text(
+          '存档修改成功！',
+          style: TextStyle(
+            fontFamily: "Microsoft YaHei UI",
+            fontWeight: FontWeight(700),
+          ),
+        ),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 
@@ -113,9 +122,18 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       _data = currentData.copyWith(scores: allPlantScores);
     });
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('已解锁全部植物')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '已解锁全部植物',
+          style: TextStyle(
+            fontFamily: "Microsoft YaHei UI",
+            fontWeight: FontWeight(700),
+          ),
+        ),
+        backgroundColor: Colors.orangeAccent,
+      ),
+    );
   }
 
   @override

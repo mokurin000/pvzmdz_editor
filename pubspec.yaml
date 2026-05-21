@@ -27,8 +27,6 @@ flutter:
     - assets/fonts/
 
   fonts:
-    - family: Microsoft YaHei
+    - family: Microsoft YaHei UI
       fonts:
         - asset: assets/fonts/MSYH.ttc
-        - asset: assets/fonts/MSYHBD.ttc
-          weight: 700
