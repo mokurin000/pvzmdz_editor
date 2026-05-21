@@ -254,8 +254,8 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
                         curve: Curves.easeInOutCubic,
                         child: AnimatedSwitcher(
                           duration: _panelSwitchDuration,
-                          switchInCurve: Curves.easeInOut,
-                          switchOutCurve: Curves.easeInOut,
+                          switchInCurve: Curves.easeInOutBack,
+                          switchOutCurve: Curves.easeInOutBack,
                           transitionBuilder: (child, animation) {
                             final offsetAnimation = Tween<Offset>(
                               begin: const Offset(0.06, 0),
@@ -285,7 +285,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   }
 }
 
-class ChushisunCard extends StatelessWidget {
+class ChushisunCard extends StatefulWidget {
   const ChushisunCard({
     super.key,
     required this.controller,
@@ -298,6 +298,13 @@ class ChushisunCard extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   @override
+  State<ChushisunCard> createState() => _ChushisunCardState();
+}
+
+class _ChushisunCardState extends State<ChushisunCard> {
+  final _fieldKey = GlobalKey<FormFieldState<String>>();
+
+  @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 0,
@@ -307,22 +314,33 @@ class ChushisunCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '初始阳光: $initialSunlight',
+              '初始阳光: ${widget.initialSunlight}',
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 12),
             TextFormField(
-              controller: controller,
+              key: _fieldKey,
+              controller: widget.controller,
               decoration: const InputDecoration(
                 labelText: '购买次数',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
-              validator: (value) =>
-                  int.tryParse(value ?? '') == null ? '无效数字' : null,
-              onChanged: onChanged,
+              validator: (value) {
+                if (value == "") {
+                  return "输入为空";
+                } else if (int.tryParse(value ?? '') == null) {
+                  return '无效数字';
+                }
+
+                return null;
+              },
+              onChanged: (value) {
+                widget.onChanged(value);
+                _fieldKey.currentState?.validate();
+              },
             ),
           ],
         ),
@@ -363,7 +381,7 @@ class _MobileSaveEditorPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _SectionHeader(title: '基础数值修改'),
+          const _SectionHeader(title: '数值修改'),
           const SizedBox(height: 12),
           chushisunCard,
           const SizedBox(height: 20),
@@ -442,8 +460,8 @@ class _DesktopSaveEditorPage extends StatelessWidget {
               Expanded(
                 flex: 4,
                 child: _DesktopPanel(
-                  title: '核心编辑',
-                  subtitle: '围绕数值修改和保存操作',
+                  title: '数值修改',
+                  subtitle: null,
                   children: [
                     chushisunCard,
                     const SizedBox(height: 16),
@@ -492,8 +510,8 @@ class _DesktopSaveEditorPage extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: _DesktopPanel(
-                  title: '操作区',
-                  subtitle: '快捷操作',
+                  title: '存档操作',
+                  subtitle: null,
                   children: [
                     _ActionButtons(
                       onUnlockAllPlants: onUnlockAllPlants,
@@ -518,7 +536,7 @@ class _DesktopPanel extends StatelessWidget {
   });
 
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final List<Widget> children;
 
   @override
@@ -536,9 +554,10 @@ class _DesktopPanel extends StatelessWidget {
                 context,
               ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
             ),
-            const SizedBox(height: 6),
-            Text(subtitle, style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(height: 20),
+            if (subtitle != null) const SizedBox(height: 6),
+            if (subtitle != null)
+              Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 30),
             ...children,
           ],
         ),
