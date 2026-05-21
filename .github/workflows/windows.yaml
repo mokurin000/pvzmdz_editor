@@ -34,7 +34,7 @@ jobs:
       - name: 🚀 Cache pub deps
         uses: actions/cache@v5
         with:
-          path: ~/.pub-cache
+          path: ~/AppData/Local/Pub/Cache
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
           restore-keys: ${{ runner.os }}-pub-
 
