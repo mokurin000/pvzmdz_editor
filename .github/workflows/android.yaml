@@ -11,9 +11,9 @@ on:
       - /pubspec.lock
 
     tags: ["v*.*.*"]
-
   pull_request:
     branches: [main, master]
+  workflow_dispatch:
 
 permissions:
   contents: write # allow creating/updating Releases & uploading assets
