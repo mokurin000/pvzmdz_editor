@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
@@ -16,7 +17,7 @@ class SaveEditorScreen extends StatefulWidget {
 }
 
 class _SaveEditorScreenState extends State<SaveEditorScreen> {
-  static const _minScreenWidth = 400.0;
+  static final _minScreenWidth = io.Platform.isAndroid ? 0.0 : 400.0;
   static const _minScreenHeight = 500.0;
   static const _panelSwitchDuration = Duration(milliseconds: 300);
 
@@ -148,11 +149,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
         ),
       );
     } catch (error, stackTrace) {
-      logger.e(
-        'Failed to save data.',
-        error: error,
-        stackTrace: stackTrace,
-      );
+      logger.e('Failed to save data.', error: error, stackTrace: stackTrace);
 
       if (!mounted) {
         return;
