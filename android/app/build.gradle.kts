@@ -6,8 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pvzmdz_editor"
-    minSdk = 24
+    namespace = "io.github.mokurin000.pvzmdz_editor"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -24,7 +23,7 @@ android {
         applicationId = "io.github.mokurin000.pvzmdz_editor"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        minSdk = 24
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

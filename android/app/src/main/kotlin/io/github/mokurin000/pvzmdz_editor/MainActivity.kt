@@ -1,4 +1,4 @@
-package com.example.pvzmdz_editor
+package io.github.mokurin000.pvzmdz_editor
 
 import io.flutter.embedding.android.FlutterActivity
 

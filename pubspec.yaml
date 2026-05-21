@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   json_annotation: ^4.12.0
   logger: ^2.7.0
+  path_provider: ^2.1.5
   shizuku_api: ^1.2.2
   win32: ^6.2.0
 
@@ -23,13 +24,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  assets:
-    - assets/fonts/
-
-  fonts:
-    - family: Microsoft YaHei UI
-      fonts:
-        - asset: assets/fonts/MSYH.ttc
-        - asset: assets/fonts/msyhbd.ttc
-          weight: 700

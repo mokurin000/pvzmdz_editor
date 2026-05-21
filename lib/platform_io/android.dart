@@ -4,6 +4,7 @@ import 'dart:io' as io;
 
 import 'package:logger/logger.dart';
 import 'package:shizuku_api/shizuku_api.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:pvzmdz_editor/platform_io/base.dart';
 
@@ -54,6 +55,8 @@ Future<void> _ensureShizukuReady() async {
 }
 
 Future<void> _runCommandChecked(String command) async {
+  logger.i("Run Command: $command");
+
   final result = await _shizukuApi.runCommand(command);
   if (result == null) {
     throw ShizukuCommandFailedException(command);
@@ -61,12 +64,12 @@ Future<void> _runCommandChecked(String command) async {
 }
 
 Future<String?> readGameSaveDataImpl() async {
+  // ensure Android creates `data/${applicaionId}/files`
+  await getExternalStorageDirectory();
+
   try {
     await _ensureShizukuReady();
-    await io.Directory(_gameSaveLocalDir).create(recursive: true);
-    await _runCommandChecked(
-      "cp -f '$_gameSaveSourcePath' '$_gameSaveLocalPath'",
-    );
+    await _runCommandChecked("cp -f $_gameSaveSourcePath $_gameSaveLocalPath");
 
     final localSaveFile = io.File(_gameSaveLocalPath);
     if (!await localSaveFile.exists()) {
@@ -94,10 +97,9 @@ Future<String?> readGameSaveDataImpl() async {
 
 Future<void> writeGameSaveDataImpl(String gameData) async {
   await _ensureShizukuReady();
-  await io.Directory(_gameSaveLocalDir).create(recursive: true);
-  await io.File(_gameSaveLocalPath).writeAsString(gameData);
+  await io.File(_gameSaveLocalPath).writeAsString(gameData, flush: true);
   await _runCommandChecked(
-    "mkdir -p '$_gameSaveSourceDir' && cp -f '$_gameSaveLocalPath' '$_gameSaveSourcePath' && rm -f '$_gameSaveSourceMd5Path'",
+    "cp -f $_gameSaveLocalPath $_gameSaveSourcePath; rm -f $_gameSaveSourceMd5Path",
   );
 }
 
