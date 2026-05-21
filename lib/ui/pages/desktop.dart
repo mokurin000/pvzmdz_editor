@@ -7,6 +7,7 @@ class DesktopSaveEditorPage extends StatelessWidget {
     super.key,
     required this.chushisunCard,
     required this.coinController,
+    required this.maoliangController,
     required this.touziController,
     required this.touzi2Controller,
     required this.coinYingtaoController,
@@ -19,6 +20,7 @@ class DesktopSaveEditorPage extends StatelessWidget {
 
   final Widget chushisunCard;
   final TextEditingController coinController;
+  final TextEditingController maoliangController;
   final TextEditingController touziController;
   final TextEditingController touzi2Controller;
   final TextEditingController coinYingtaoController;
@@ -54,14 +56,17 @@ class DesktopSaveEditorPage extends StatelessWidget {
                         controller: coinController,
                       ),
                       second: NumberField(
+                        label: '猫粮',
+                        controller: maoliangController,
+                      ),
+                      third: NumberField(
                         label: '投资次数',
                         controller: touziController,
                       ),
-                      third: NumberField(
+                      fourth: NumberField(
                         label: '货币投资次数',
                         controller: touzi2Controller,
                       ),
-                      fourth: const SizedBox.shrink(),
                     ),
                     const SizedBox(height: 16),
                     SectionHeader(title: '道具剩余次数'),

@@ -27,6 +27,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   final _formKey = GlobalKey<FormState>();
   final _chushisunCtrl = TextEditingController();
   final _coinCtrl = TextEditingController();
+  final _maoliangCtrl = TextEditingController();
   final _touziCtrl = TextEditingController();
   final _touzi2Ctrl = TextEditingController();
   final _coinYingtaoCtrl = TextEditingController();
@@ -100,6 +101,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   void _syncControllers(GameData data) {
     _chushisunCtrl.text = data.chushisun.toString();
     _coinCtrl.text = data.coin.toString();
+    _maoliangCtrl.text = data.maoliang.toString();
     _touziCtrl.text = data.touzi.toString();
     _touzi2Ctrl.text = data.touzi2.toString();
     _coinYingtaoCtrl.text = data.coinYingtao.toString();
@@ -123,6 +125,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
     final newData = currentData.copyWith(
       chushisun: int.tryParse(_chushisunCtrl.text) ?? 0,
       coin: int.tryParse(_coinCtrl.text) ?? 0,
+      maoliang: int.tryParse(_maoliangCtrl.text) ?? 0,
       touzi: int.tryParse(_touziCtrl.text) ?? 0,
       touzi2: int.tryParse(_touzi2Ctrl.text) ?? 0,
       coinYingtao: int.tryParse(_coinYingtaoCtrl.text) ?? 0,
@@ -210,6 +213,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   void dispose() {
     _chushisunCtrl.dispose();
     _coinCtrl.dispose();
+    _maoliangCtrl.dispose();
     _touziCtrl.dispose();
     _touzi2Ctrl.dispose();
     _coinYingtaoCtrl.dispose();
@@ -246,6 +250,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
         child: DesktopSaveEditorPage(
           chushisunCard: chushisunCard,
           coinController: _coinCtrl,
+          maoliangController: _maoliangCtrl,
           touziController: _touziCtrl,
           touzi2Controller: _touzi2Ctrl,
           coinYingtaoController: _coinYingtaoCtrl,
@@ -263,6 +268,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       child: MobileSaveEditorPage(
         chushisunCard: chushisunCard,
         coinController: _coinCtrl,
+        maoliangController: _maoliangCtrl,
         touziController: _touziCtrl,
         touzi2Controller: _touzi2Ctrl,
         coinYingtaoController: _coinYingtaoCtrl,
@@ -323,7 +329,9 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
               );
             }
 
-            final isDesktop = viewportWidth / 1.35 > viewportHeight;
+            // DON'T TOUCH, UI trick
+            final isDesktop =
+                constraints.maxWidth / 1.5 > constraints.maxHeight;
 
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,

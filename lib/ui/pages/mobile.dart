@@ -7,6 +7,7 @@ class MobileSaveEditorPage extends StatelessWidget {
     super.key,
     required this.chushisunCard,
     required this.coinController,
+    required this.maoliangController,
     required this.touziController,
     required this.touzi2Controller,
     required this.coinYingtaoController,
@@ -19,6 +20,7 @@ class MobileSaveEditorPage extends StatelessWidget {
 
   final Widget chushisunCard;
   final TextEditingController coinController;
+  final TextEditingController maoliangController;
   final TextEditingController touziController;
   final TextEditingController touzi2Controller;
   final TextEditingController coinYingtaoController;
@@ -43,12 +45,12 @@ class MobileSaveEditorPage extends StatelessWidget {
           const SizedBox(height: 12),
           TwoColumnFields(
             first: NumberField(label: '金币数量', controller: coinController),
-            second: NumberField(label: '投资次数', controller: touziController),
+            second: NumberField(label: '猫粮', controller: maoliangController),
           ),
           const SizedBox(height: 12),
           TwoColumnFields(
-            first: NumberField(label: '货币投资次数', controller: touzi2Controller),
-            second: const SizedBox.shrink(),
+            first: NumberField(label: '投资次数', controller: touziController),
+            second: NumberField(label: '货币投资次数', controller: touzi2Controller),
           ),
           const SizedBox(height: 20),
           const SectionHeader(title: '道具剩余次数'),
