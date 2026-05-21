@@ -177,7 +177,16 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
     }
 
     setState(() {
-      _data = currentData.copyWith(scores: allPlantScores);
+      _data = currentData.copyWith(
+        scores: allPlantScores,
+        // Already have it
+        canbaohusan: true,
+        // No longer needed
+        liekabao: true,
+        xykabao: true,
+        sskabao: true,
+        ptkabao: true,
+      );
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -186,7 +195,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
           '已解锁全部植物',
           style: TextStyle(
             fontFamily: "Microsoft YaHei UI",
-            fontWeight: FontWeight(700),
+            fontWeight: FontWeight.w700,
           ),
         ),
         backgroundColor: Colors.orangeAccent,
