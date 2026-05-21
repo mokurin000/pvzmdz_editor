@@ -117,7 +117,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('抽卡版存档修改器'),
-          backgroundColor: Colors.orange[700],
+          backgroundColor: Colors.blue,
         ),
         body: Form(
           key: _formKey,
@@ -218,7 +218,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
                   child: ElevatedButton(
                     onPressed: _saveData,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[700],
+                      backgroundColor: Colors.blueAccent,
                       foregroundColor: Colors.white,
                       textStyle: const TextStyle(
                         fontSize: 18,

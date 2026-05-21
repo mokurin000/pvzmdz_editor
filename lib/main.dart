@@ -26,6 +26,18 @@ class MyApp extends StatelessWidget {
           titleMedium: TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
+
+      darkTheme: ThemeData(
+        fontFamily: 'Microsoft YaHei',
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.lightBlue,
+          brightness: Brightness.dark,
+        ),
+      ),
+
+      themeMode: ThemeMode.system, // ← 自动跟随系统暗色/亮色主题
+
       home: const SaveEditorScreen(),
     );
   }
