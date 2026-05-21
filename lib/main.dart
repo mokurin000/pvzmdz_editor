@@ -2,8 +2,8 @@ import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
 
-import 'package:pvzmdz_editor/save_editor.dart';
-import 'package:pvzmdz_editor/shizuku_guard.dart';
+import 'package:pvzmdz_editor/ui/save_editor.dart';
+import 'package:pvzmdz_editor/ui/shizuku_guard.dart';
 
 void main() {
   runApp(const MyApp());

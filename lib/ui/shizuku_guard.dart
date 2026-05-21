@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shizuku_api/shizuku_api.dart';
 
 import 'package:pvzmdz_editor/platform_io/android.dart';
-import 'package:pvzmdz_editor/save_editor.dart';
+import 'package:pvzmdz_editor/ui/save_editor.dart';
 
 class ShizukuGuardPage extends StatefulWidget {
   const ShizukuGuardPage({super.key});
