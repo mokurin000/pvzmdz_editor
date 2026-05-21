@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 
+import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'package:pvzmdz_editor/game_data.dart';
@@ -17,17 +17,17 @@ class SaveEditorScreen extends StatefulWidget {
 
 class _SaveEditorScreenState extends State<SaveEditorScreen> {
   final _formKey = GlobalKey<FormState>();
-  late GameData _data;
+  final _chushisunCtrl = TextEditingController();
+  final _coinCtrl = TextEditingController();
+  final _touziCtrl = TextEditingController();
+  final _touzi2Ctrl = TextEditingController();
+  final _coinYingtaoCtrl = TextEditingController();
+  final _sunPokeCtrl = TextEditingController();
+  final _zmPokeCtrl = TextEditingController();
+  final _tianjiangCtrl = TextEditingController();
 
-  // 输入控制器
-  final TextEditingController _chushisunCtrl = TextEditingController();
-  final TextEditingController _coinCtrl = TextEditingController();
-  final TextEditingController _touziCtrl = TextEditingController();
-  final TextEditingController _touzi2Ctrl = TextEditingController();
-  final TextEditingController _coinYingtaoCtrl = TextEditingController();
-  final TextEditingController _sunPokeCtrl = TextEditingController();
-  final TextEditingController _zmPokeCtrl = TextEditingController();
-  final TextEditingController _tianjiangCtrl = TextEditingController();
+  GameData? _data;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -36,31 +36,46 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   }
 
   Future<void> _loadData() async {
-    String? rawData = await readGameSaveData();
-    setState(() {
-      if (rawData != null) {
-        _data = GameData.fromJson(jsonDecode(rawData));
-      } else {
-        _data = GameData.defaultData();
-      }
+    final rawData = await readGameSaveData();
+    final data = rawData != null
+        ? GameData.fromJson(jsonDecode(rawData))
+        : GameData.defaultData();
 
-      _chushisunCtrl.text = _data.chushisun.toString();
-      _coinCtrl.text = _data.coin.toString();
-      _touziCtrl.text = _data.touzi.toString();
-      _touzi2Ctrl.text = _data.touzi2.toString();
-      _coinYingtaoCtrl.text = _data.coinYingtao.toString();
-      _sunPokeCtrl.text = _data.sunPokeCishu.toString();
-      _zmPokeCtrl.text = _data.zmPokeCishu.toString();
-      _tianjiangCtrl.text = _data.tianjianglihe.toString();
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      _data = data;
+      _isLoading = false;
+      _syncControllers(data);
     });
   }
 
-  int get initialSunlight => 50 + 25 * (_data.chushisun);
+  void _syncControllers(GameData data) {
+    _chushisunCtrl.text = data.chushisun.toString();
+    _coinCtrl.text = data.coin.toString();
+    _touziCtrl.text = data.touzi.toString();
+    _touzi2Ctrl.text = data.touzi2.toString();
+    _coinYingtaoCtrl.text = data.coinYingtao.toString();
+    _sunPokeCtrl.text = data.sunPokeCishu.toString();
+    _zmPokeCtrl.text = data.zmPokeCishu.toString();
+    _tianjiangCtrl.text = data.tianjianglihe.toString();
+  }
+
+  int get initialSunlight => 50 + 25 * (_data?.chushisun ?? 0);
 
   Future<void> _saveData() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
 
-    final newData = _data.copyWith(
+    final currentData = _data;
+    if (currentData == null) {
+      return;
+    }
+
+    final newData = currentData.copyWith(
       chushisun: int.tryParse(_chushisunCtrl.text) ?? 0,
       coin: int.tryParse(_coinCtrl.text) ?? 0,
       touzi: int.tryParse(_touziCtrl.text) ?? 0,
@@ -74,18 +89,24 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
 
     await writeGameSaveData(jsonEncode(newData.toJson()));
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('存档修改成功！'), backgroundColor: Colors.green),
-      );
+    if (!mounted) {
+      return;
     }
 
     setState(() => _data = newData);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('存档修改成功！'), backgroundColor: Colors.green),
+    );
   }
 
   void _unlockAllPlants() {
+    final currentData = _data;
+    if (currentData == null) {
+      return;
+    }
+
     setState(() {
-      _data = _data.copyWith(scores: allPlantScores);
+      _data = currentData.copyWith(scores: allPlantScores);
     });
 
     ScaffoldMessenger.of(
@@ -108,178 +129,489 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      // 强制使用 Sans Serif 默认字体
-      data: Theme.of(context).copyWith(
-        textTheme: Theme.of(context).textTheme.apply(
-          fontFamily: null, // 使用系统默认 Sans Serif 字体
-        ),
-        primaryTextTheme: Theme.of(
-          context,
-        ).primaryTextTheme.apply(fontFamily: null),
-        // 同时影响 AppBar 等
-        appBarTheme: AppBarTheme.of(context).copyWith(
-          titleTextStyle: AppBarTheme.of(
-            context,
-          ).titleTextStyle?.copyWith(fontFamily: null),
+    final baseTheme = Theme.of(context);
+    final theme = baseTheme.copyWith(
+      textTheme: baseTheme.textTheme.apply(fontFamily: null),
+      primaryTextTheme: baseTheme.primaryTextTheme.apply(fontFamily: null),
+      appBarTheme: baseTheme.appBarTheme.copyWith(
+        titleTextStyle: baseTheme.appBarTheme.titleTextStyle?.copyWith(
+          fontFamily: null,
         ),
       ),
+    );
+
+    return Theme(
+      data: theme,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('抽卡版存档修改器'),
+          centerTitle: true,
           backgroundColor: Colors.blue,
         ),
-        body: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '基础数值修改',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    // fontFamily: null, // 可选，Theme 已全局控制
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // 初始阳光
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          '初始阳光购买次数',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextFormField(
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Form(
+                key: _formKey,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth >= 960) {
+                      return _DesktopSaveEditorPage(
+                        chushisunCard: ChushisunCard(
                           controller: _chushisunCtrl,
-                          decoration: const InputDecoration(
-                            labelText: '购买次数 (≥0)',
-                          ),
-                          keyboardType: TextInputType.number,
-                          validator: (v) =>
-                              (int.tryParse(v ?? '') ?? -1) < 0 ? '必须≥0' : null,
-                          onChanged: (sun) => setState(() {
-                            _data = _data.copyWith(
-                              chushisun: int.tryParse(sun),
+                          initialSunlight: initialSunlight,
+                          onChanged: (sun) {
+                            final currentData = _data;
+                            if (currentData == null) return;
+                            setState(() {
+                              _data = currentData.copyWith(
+                                chushisun: int.tryParse(sun) ?? 0,
+                              );
+                            });
+                          },
+                        ),
+                        coinController: _coinCtrl,
+                        touziController: _touziCtrl,
+                        touzi2Controller: _touzi2Ctrl,
+                        coinYingtaoController: _coinYingtaoCtrl,
+                        sunPokeController: _sunPokeCtrl,
+                        zmPokeController: _zmPokeCtrl,
+                        tianjiangController: _tianjiangCtrl,
+                        onUnlockAllPlants: _unlockAllPlants,
+                        onSave: _saveData,
+                      );
+                    }
+
+                    return _MobileSaveEditorPage(
+                      chushisunCard: ChushisunCard(
+                        controller: _chushisunCtrl,
+                        initialSunlight: initialSunlight,
+                        onChanged: (sun) {
+                          final currentData = _data;
+                          if (currentData == null) return;
+                          setState(() {
+                            _data = currentData.copyWith(
+                              chushisun: int.tryParse(sun) ?? 0,
                             );
-                          }),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '当前初始阳光：$initialSunlight',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.blue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // 金币与投资
-                const Text(
-                  '金币与投资',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                _buildNumberFieldsRow(
-                  _buildNumberField('金币数量', _coinCtrl),
-                  _buildNumberField('投资次数', _touziCtrl),
-                ),
-                const SizedBox(height: 12),
-                _buildNumberFieldsRow(
-                  _buildNumberField('货币投资次数', _touzi2Ctrl),
-                  const SizedBox(),
-                ),
-
-                const Divider(height: 40),
-
-                const Text(
-                  '道具剩余次数',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-
-                _buildNumberFieldsRow(
-                  _buildNumberField('樱桃炸弹', _coinYingtaoCtrl),
-                  _buildNumberField('阳光精灵球', _sunPokeCtrl),
-                ),
-                const SizedBox(height: 12),
-                _buildNumberFieldsRow(
-                  _buildNumberField('僵尸精灵球', _zmPokeCtrl),
-                  _buildNumberField('天降礼盒', _tianjiangCtrl),
-                ),
-
-                const SizedBox(height: 40),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: OutlinedButton(
-                    onPressed: _unlockAllPlants,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.blueAccent,
-                      side: const BorderSide(color: Colors.blueAccent),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                          });
+                        },
                       ),
-                    ),
-                    child: const Text(
-                      '一键解锁全部植物',
-                      style: TextStyle(fontFamily: "Microsoft YaHei UI"),
-                    ),
-                  ),
+                      coinController: _coinCtrl,
+                      touziController: _touziCtrl,
+                      touzi2Controller: _touzi2Ctrl,
+                      coinYingtaoController: _coinYingtaoCtrl,
+                      sunPokeController: _sunPokeCtrl,
+                      zmPokeController: _zmPokeCtrl,
+                      tianjiangController: _tianjiangCtrl,
+                      onUnlockAllPlants: _unlockAllPlants,
+                      onSave: _saveData,
+                    );
+                  },
                 ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _saveData,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      foregroundColor: Colors.white,
-                      textStyle: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    child: const Text(
-                      '保存存档',
-                      style: TextStyle(fontFamily: "Microsoft YaHei UI"),
-                    ),
-                  ),
-                ),
-              ],
+              ),
+      ),
+    );
+  }
+}
+
+class ChushisunCard extends StatelessWidget {
+  const ChushisunCard({
+    super.key,
+    required this.controller,
+    required this.initialSunlight,
+    required this.onChanged,
+  });
+
+  final TextEditingController controller;
+  final int initialSunlight;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '初始阳光购买次数',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             ),
+            const SizedBox(height: 12),
+            TextFormField(
+              controller: controller,
+              decoration: const InputDecoration(
+                labelText: '购买次数 (>=0)',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+              validator: (value) =>
+                  (int.tryParse(value ?? '') ?? -1) < 0 ? '必须>=0' : null,
+              onChanged: onChanged,
+            ),
+            const SizedBox(height: 14),
+            _SunlightPreview(value: initialSunlight),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SunlightPreview extends StatelessWidget {
+  const _SunlightPreview({required this.value});
+
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFE7F3FF), Color(0xFFD4E7FF)],
+        ),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Text(
+        '当前初始阳光：$value',
+        style: const TextStyle(
+          fontSize: 16,
+          color: Color(0xFF1565C0),
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+}
+
+class _MobileSaveEditorPage extends StatelessWidget {
+  const _MobileSaveEditorPage({
+    required this.chushisunCard,
+    required this.coinController,
+    required this.touziController,
+    required this.touzi2Controller,
+    required this.coinYingtaoController,
+    required this.sunPokeController,
+    required this.zmPokeController,
+    required this.tianjiangController,
+    required this.onUnlockAllPlants,
+    required this.onSave,
+  });
+
+  final Widget chushisunCard;
+  final TextEditingController coinController;
+  final TextEditingController touziController;
+  final TextEditingController touzi2Controller;
+  final TextEditingController coinYingtaoController;
+  final TextEditingController sunPokeController;
+  final TextEditingController zmPokeController;
+  final TextEditingController tianjiangController;
+  final VoidCallback onUnlockAllPlants;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        const _SectionHeader(title: '基础数值修改'),
+        const SizedBox(height: 12),
+        chushisunCard,
+        const SizedBox(height: 20),
+        const _SectionHeader(title: '金币与投资'),
+        const SizedBox(height: 12),
+        _TwoColumnFields(
+          first: _NumberField(label: '金币数量', controller: coinController),
+          second: _NumberField(label: '投资次数', controller: touziController),
+        ),
+        const SizedBox(height: 12),
+        _TwoColumnFields(
+          first: _NumberField(label: '货币投资次数', controller: touzi2Controller),
+          second: const SizedBox.shrink(),
+        ),
+        const SizedBox(height: 20),
+        const _SectionHeader(title: '道具剩余次数'),
+        const SizedBox(height: 12),
+        _TwoColumnFields(
+          first: _NumberField(label: '樱桃炸弹', controller: coinYingtaoController),
+          second: _NumberField(label: '阳光精灵球', controller: sunPokeController),
+        ),
+        const SizedBox(height: 12),
+        _TwoColumnFields(
+          first: _NumberField(label: '僵尸精灵球', controller: zmPokeController),
+          second: _NumberField(label: '天降礼盒', controller: tianjiangController),
+        ),
+        const SizedBox(height: 24),
+        _ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),
+      ],
+    );
+  }
+}
+
+class _DesktopSaveEditorPage extends StatelessWidget {
+  const _DesktopSaveEditorPage({
+    required this.chushisunCard,
+    required this.coinController,
+    required this.touziController,
+    required this.touzi2Controller,
+    required this.coinYingtaoController,
+    required this.sunPokeController,
+    required this.zmPokeController,
+    required this.tianjiangController,
+    required this.onUnlockAllPlants,
+    required this.onSave,
+  });
+
+  final Widget chushisunCard;
+  final TextEditingController coinController;
+  final TextEditingController touziController;
+  final TextEditingController touzi2Controller;
+  final TextEditingController coinYingtaoController;
+  final TextEditingController sunPokeController;
+  final TextEditingController zmPokeController;
+  final TextEditingController tianjiangController;
+  final VoidCallback onUnlockAllPlants;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1320),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 5,
+                child: _DesktopPanel(
+                  title: '核心编辑',
+                  subtitle: '围绕数值修改和保存操作',
+                  children: [
+                    chushisunCard,
+                    const SizedBox(height: 16),
+                    _SectionHeader(title: '金币与投资'),
+                    const SizedBox(height: 12),
+                    _TwoColumnFields(
+                      first: _NumberField(
+                        label: '金币数量',
+                        controller: coinController,
+                      ),
+                      second: _NumberField(
+                        label: '投资次数',
+                        controller: touziController,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _TwoColumnFields(
+                      first: _NumberField(
+                        label: '货币投资次数',
+                        controller: touzi2Controller,
+                      ),
+                      second: const SizedBox.shrink(),
+                    ),
+                    const SizedBox(height: 16),
+                    _SectionHeader(title: '道具剩余次数'),
+                    const SizedBox(height: 12),
+                    _TwoColumnFields(
+                      first: _NumberField(
+                        label: '樱桃炸弹',
+                        controller: coinYingtaoController,
+                      ),
+                      second: _NumberField(
+                        label: '阳光精灵球',
+                        controller: sunPokeController,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _TwoColumnFields(
+                      first: _NumberField(
+                        label: '僵尸精灵球',
+                        controller: zmPokeController,
+                      ),
+                      second: _NumberField(
+                        label: '天降礼盒',
+                        controller: tianjiangController,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _ActionButtons(
+                      onUnlockAllPlants: onUnlockAllPlants,
+                      onSave: onSave,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+            ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildNumberFieldsRow(Widget field1, Widget field2) {
+class _DesktopPanel extends StatelessWidget {
+  const _DesktopPanel({
+    required this.title,
+    required this.subtitle,
+    required this.children,
+  });
+
+  final String title;
+  final String subtitle;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.black54),
+            ),
+            const SizedBox(height: 20),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DesktopSummaryCard extends StatelessWidget {
+  const _DesktopSummaryCard({required this.title, required this.body});
+
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FC),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE4EAF2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 8),
+          Text(body),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActionButtons extends StatelessWidget {
+  const _ActionButtons({required this.onUnlockAllPlants, required this.onSave});
+
+  final VoidCallback onUnlockAllPlants;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: field1),
+        Expanded(
+          child: OutlinedButton(
+            onPressed: onUnlockAllPlants,
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.blueAccent,
+              side: const BorderSide(color: Colors.blueAccent),
+              minimumSize: const Size.fromHeight(54),
+            ),
+            child: const Text('一键解锁全部植物'),
+          ),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: field2),
+        Expanded(
+          child: ElevatedButton(
+            onPressed: onSave,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blueAccent,
+              foregroundColor: Colors.white,
+              minimumSize: const Size.fromHeight(54),
+            ),
+            child: const Text('保存存档'),
+          ),
+        ),
       ],
     );
   }
+}
 
-  Widget _buildNumberField(String label, TextEditingController controller) {
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: Theme.of(
+        context,
+      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+    );
+  }
+}
+
+class _TwoColumnFields extends StatelessWidget {
+  const _TwoColumnFields({required this.first, required this.second});
+
+  final Widget first;
+  final Widget second;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(child: first),
+        const SizedBox(width: 12),
+        Expanded(child: second),
+      ],
+    );
+  }
+}
+
+class _NumberField extends StatelessWidget {
+  const _NumberField({required this.label, required this.controller});
+
+  final String label;
+  final TextEditingController controller;
+
+  @override
+  Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
@@ -287,7 +619,8 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
         border: const OutlineInputBorder(),
       ),
       keyboardType: TextInputType.number,
-      validator: (v) => (int.tryParse(v ?? '') ?? -1) < 0 ? '不能为负数' : null,
+      validator: (value) =>
+          (int.tryParse(value ?? '') ?? -1) < 0 ? '不能为负数' : null,
     );
   }
 }
