@@ -4,6 +4,8 @@ on:
   push:
     branches: [main, master]
     paths:
+      - /.github/workflows/android.yaml
+
       - /assets
       - /android
       - /lib
@@ -62,6 +64,12 @@ jobs:
         run: |
           mkdir -p artifacts
           cp build/app/outputs/flutter-apk/*.apk artifacts/
+
+      - name: 🐞 Upload to action artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          path: artifacts/*
+          retention-days: 90
 
       # ─────────────── ONLY ON TAGS ───────────────
       - name: 🏷️ Create or update Release
