@@ -7,7 +7,7 @@ import 'package:win32/win32.dart';
 
 import 'package:pvzmdz_editor/platform_io/base.dart';
 
-final Logger logger = Logger();
+final Logger logger = Logger(filter: DevelopmentFilter());
 
 String _getGameBaseDir() {
   const String folderId = '{A520A1A4-1780-4FF6-BD18-167343C5AF16}';
@@ -52,6 +52,8 @@ class WindowsPlatform extends IOApi {
   @override
   Future<void> writeGameSaveData(String gameData) async {
     await io.File(gameDataPath).writeAsString(gameData);
-    await io.File(gameMD5Path).delete();
+    try {
+      await io.File(gameMD5Path).delete();
+    } on io.PathNotFoundException {}
   }
 }
