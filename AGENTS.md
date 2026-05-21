@@ -1,5 +1,39 @@
 ## 环境与工具使用规范
 
+### rg 使用规范
+
+调用 rg 时，为避免 " 转义问题，总是直接调用 rg -n "...|..."
+
+bad:
+
+```bash
+C:\\Windows\\system32\\cmd.exe" /c "bash.exe -lc 'rg -n "SaveEditorScreen|Animated|LayoutBuilder|MediaQuery|panel|DesktopSaveEditorPage|MobileSaveEditorPage" lib/save_editor.dart
+```
+
+good:
+
+```bash
+rg.exe -n "SaveEditorScreen|Animated|LayoutBuilder|MediaQuery|panel|DesktopSaveEditorPage|MobileSaveEditorPage" lib/save_editor.dart
+```
+
+### Win32 Path
+
+Windows 路径同时支持 `/` 和 `\` ，但 `\\` 更容易引起问题。
+
+### Bash calling
+
+good:
+
+```bash
+bash.exe -c "..."
+```
+
+bad:
+
+```bash
+C:/Windows/system32/cmd.exe /c "bash.exe -lc '...'"
+```
+
 ### 文件读取要求
 
 严禁 使用 PowerShell 的 Get-Content 命令读取任何文件。

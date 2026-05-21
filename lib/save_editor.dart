@@ -16,6 +16,10 @@ class SaveEditorScreen extends StatefulWidget {
 }
 
 class _SaveEditorScreenState extends State<SaveEditorScreen> {
+  static const _minScreenWidth = 400.0;
+  static const _minScreenHeight = 500.0;
+  static const _panelSwitchDuration = Duration(milliseconds: 300);
+
   final _formKey = GlobalKey<FormState>();
   final _chushisunCtrl = TextEditingController();
   final _coinCtrl = TextEditingController();
@@ -127,6 +131,62 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
     super.dispose();
   }
 
+  Widget _buildChushisunCard() {
+    return ChushisunCard(
+      controller: _chushisunCtrl,
+      initialSunlight: initialSunlight,
+      onChanged: (sun) {
+        final currentData = _data;
+        if (currentData == null) {
+          return;
+        }
+
+        setState(() {
+          _data = currentData.copyWith(chushisun: int.tryParse(sun) ?? 0);
+        });
+      },
+    );
+  }
+
+  Widget _buildEditorPage({required bool isDesktop}) {
+    final pageKey = ValueKey(isDesktop ? 'desktop-editor' : 'mobile-editor');
+    final chushisunCard = _buildChushisunCard();
+
+    if (isDesktop) {
+      return KeyedSubtree(
+        key: pageKey,
+        child: _DesktopSaveEditorPage(
+          chushisunCard: chushisunCard,
+          coinController: _coinCtrl,
+          touziController: _touziCtrl,
+          touzi2Controller: _touzi2Ctrl,
+          coinYingtaoController: _coinYingtaoCtrl,
+          sunPokeController: _sunPokeCtrl,
+          zmPokeController: _zmPokeCtrl,
+          tianjiangController: _tianjiangCtrl,
+          onUnlockAllPlants: _unlockAllPlants,
+          onSave: _saveData,
+        ),
+      );
+    }
+
+    return KeyedSubtree(
+      key: pageKey,
+      child: _MobileSaveEditorPage(
+        chushisunCard: chushisunCard,
+        coinController: _coinCtrl,
+        touziController: _touziCtrl,
+        touzi2Controller: _touzi2Ctrl,
+        coinYingtaoController: _coinYingtaoCtrl,
+        sunPokeController: _sunPokeCtrl,
+        zmPokeController: _zmPokeCtrl,
+        tianjiangController: _tianjiangCtrl,
+        onUnlockAllPlants: _unlockAllPlants,
+        onSave: _saveData,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final baseTheme = Theme.of(context);
@@ -148,66 +208,79 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
           centerTitle: true,
           backgroundColor: Colors.blue,
         ),
-        body: _isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Form(
-                key: _formKey,
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth / 1.35 > constraints.maxHeight) {
-                      return _DesktopSaveEditorPage(
-                        chushisunCard: ChushisunCard(
-                          controller: _chushisunCtrl,
-                          initialSunlight: initialSunlight,
-                          onChanged: (sun) {
-                            final currentData = _data;
-                            if (currentData == null) return;
-                            setState(() {
-                              _data = currentData.copyWith(
-                                chushisun: int.tryParse(sun) ?? 0,
-                              );
-                            });
-                          },
-                        ),
-                        coinController: _coinCtrl,
-                        touziController: _touziCtrl,
-                        touzi2Controller: _touzi2Ctrl,
-                        coinYingtaoController: _coinYingtaoCtrl,
-                        sunPokeController: _sunPokeCtrl,
-                        zmPokeController: _zmPokeCtrl,
-                        tianjiangController: _tianjiangCtrl,
-                        onUnlockAllPlants: _unlockAllPlants,
-                        onSave: _saveData,
-                      );
-                    }
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final viewportWidth = constraints.maxWidth < _minScreenWidth
+                ? _minScreenWidth
+                : constraints.maxWidth;
+            final viewportHeight = constraints.maxHeight < _minScreenHeight
+                ? _minScreenHeight
+                : constraints.maxHeight;
 
-                    return _MobileSaveEditorPage(
-                      chushisunCard: ChushisunCard(
-                        controller: _chushisunCtrl,
-                        initialSunlight: initialSunlight,
-                        onChanged: (sun) {
-                          final currentData = _data;
-                          if (currentData == null) return;
-                          setState(() {
-                            _data = currentData.copyWith(
-                              chushisun: int.tryParse(sun) ?? 0,
-                            );
-                          });
-                        },
+            if (_isLoading) {
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: viewportWidth,
+                  child: SingleChildScrollView(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minWidth: _minScreenWidth,
+                        minHeight: viewportHeight,
                       ),
-                      coinController: _coinCtrl,
-                      touziController: _touziCtrl,
-                      touzi2Controller: _touzi2Ctrl,
-                      coinYingtaoController: _coinYingtaoCtrl,
-                      sunPokeController: _sunPokeCtrl,
-                      zmPokeController: _zmPokeCtrl,
-                      tianjiangController: _tianjiangCtrl,
-                      onUnlockAllPlants: _unlockAllPlants,
-                      onSave: _saveData,
-                    );
-                  },
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            final isDesktop = viewportWidth / 1.35 > viewportHeight;
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: viewportWidth,
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: _minScreenWidth,
+                      minHeight: viewportHeight,
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: AnimatedSize(
+                        duration: _panelSwitchDuration,
+                        curve: Curves.easeInOutCubic,
+                        child: AnimatedSwitcher(
+                          duration: _panelSwitchDuration,
+                          switchInCurve: Curves.easeInOut,
+                          switchOutCurve: Curves.easeInOut,
+                          transitionBuilder: (child, animation) {
+                            final offsetAnimation =
+                                Tween<Offset>(
+                                  begin: const Offset(0.06, 0),
+                                  end: Offset.zero,
+                                ).animate(animation);
+
+                            return FadeTransition(
+                              opacity: animation,
+                              child: SlideTransition(
+                                position: offsetAnimation,
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: _buildEditorPage(isDesktop: isDesktop),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -316,39 +389,42 @@ class _MobileSaveEditorPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return Padding(
       padding: const EdgeInsets.all(16),
-      children: [
-        const _SectionHeader(title: '基础数值修改'),
-        const SizedBox(height: 12),
-        chushisunCard,
-        const SizedBox(height: 20),
-        const _SectionHeader(title: '金币与投资'),
-        const SizedBox(height: 12),
-        _TwoColumnFields(
-          first: _NumberField(label: '金币数量', controller: coinController),
-          second: _NumberField(label: '投资次数', controller: touziController),
-        ),
-        const SizedBox(height: 12),
-        _TwoColumnFields(
-          first: _NumberField(label: '货币投资次数', controller: touzi2Controller),
-          second: const SizedBox.shrink(),
-        ),
-        const SizedBox(height: 20),
-        const _SectionHeader(title: '道具剩余次数'),
-        const SizedBox(height: 12),
-        _TwoColumnFields(
-          first: _NumberField(label: '樱桃炸弹', controller: coinYingtaoController),
-          second: _NumberField(label: '阳光精灵球', controller: sunPokeController),
-        ),
-        const SizedBox(height: 12),
-        _TwoColumnFields(
-          first: _NumberField(label: '僵尸精灵球', controller: zmPokeController),
-          second: _NumberField(label: '天降礼盒', controller: tianjiangController),
-        ),
-        const SizedBox(height: 24),
-        _ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),
-      ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const _SectionHeader(title: '基础数值修改'),
+          const SizedBox(height: 12),
+          chushisunCard,
+          const SizedBox(height: 20),
+          const _SectionHeader(title: '金币与投资'),
+          const SizedBox(height: 12),
+          _TwoColumnFields(
+            first: _NumberField(label: '金币数量', controller: coinController),
+            second: _NumberField(label: '投资次数', controller: touziController),
+          ),
+          const SizedBox(height: 12),
+          _TwoColumnFields(
+            first: _NumberField(label: '货币投资次数', controller: touzi2Controller),
+            second: const SizedBox.shrink(),
+          ),
+          const SizedBox(height: 20),
+          const _SectionHeader(title: '道具剩余次数'),
+          const SizedBox(height: 12),
+          _TwoColumnFields(
+            first: _NumberField(label: '樱桃炸弹', controller: coinYingtaoController),
+            second: _NumberField(label: '阳光精灵球', controller: sunPokeController),
+          ),
+          const SizedBox(height: 12),
+          _TwoColumnFields(
+            first: _NumberField(label: '僵尸精灵球', controller: zmPokeController),
+            second: _NumberField(label: '天降礼盒', controller: tianjiangController),
+          ),
+          const SizedBox(height: 24),
+          _ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),
+        ],
+      ),
     );
   }
 }
@@ -381,9 +457,11 @@ class _DesktopSaveEditorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ListView(
-        children: [
-          Row(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1320),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
@@ -451,7 +529,7 @@ class _DesktopSaveEditorPage extends StatelessWidget {
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
