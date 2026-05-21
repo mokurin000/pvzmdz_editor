@@ -1,6 +1,6 @@
 name: pvzmdz_editor
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0+1
 
 environment:
@@ -22,3 +22,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/fonts/
+
+  fonts:
+    - family: Microsoft YaHei
+      fonts:
+        - asset: assets/fonts/MSYH.ttc
+        - asset: assets/fonts/MSYHBD.ttc
+          weight: 700

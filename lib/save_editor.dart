@@ -44,7 +44,6 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
         _data = GameData.defaultData();
       }
 
-      // 初始化控制器
       _chushisunCtrl.text = _data.chushisun.toString();
       _coinCtrl.text = _data.coin.toString();
       _touziCtrl.text = _data.touzi.toString();
@@ -70,7 +69,6 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       sunPokeCishu: int.tryParse(_sunPokeCtrl.text) ?? 0,
       zmPokeCishu: int.tryParse(_zmPokeCtrl.text) ?? 0,
       tianjianglihe: int.tryParse(_tianjiangCtrl.text) ?? 0,
-      // 关闭反作弊标记
       chuizhitongbu: false,
     );
 
@@ -82,7 +80,6 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       );
     }
 
-    // 重新加载显示最新数据
     setState(() => _data = newData);
   }
 
@@ -101,117 +98,166 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('抽卡版存档修改器'),
-        backgroundColor: Colors.orange[700],
+    return Theme(
+      // 强制使用 Sans Serif 默认字体
+      data: Theme.of(context).copyWith(
+        textTheme: Theme.of(context).textTheme.apply(
+          fontFamily: null, // 使用系统默认 Sans Serif 字体
+        ),
+        primaryTextTheme: Theme.of(
+          context,
+        ).primaryTextTheme.apply(fontFamily: null),
+        // 同时影响 AppBar 等
+        appBarTheme: AppBarTheme.of(context).copyWith(
+          titleTextStyle: AppBarTheme.of(
+            context,
+          ).titleTextStyle?.copyWith(fontFamily: null),
+        ),
       ),
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '基础数值修改',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-
-              // 初始阳光
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '初始阳光购买次数',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      TextFormField(
-                        controller: _chushisunCtrl,
-                        decoration: const InputDecoration(
-                          labelText: '购买次数 (≥0)',
-                        ),
-                        keyboardType: TextInputType.number,
-                        validator: (v) =>
-                            (int.tryParse(v ?? '') ?? -1) < 0 ? '必须≥0' : null,
-                        onChanged: (sun) => setState(() {
-                          _data = _data.copyWith(chushisun: int.tryParse(sun));
-                        }),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '当前初始阳光：$initialSunlight',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('抽卡版存档修改器'),
+          backgroundColor: Colors.orange[700],
+        ),
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '基础数值修改',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    // fontFamily: null, // 可选，Theme 已全局控制
                   ),
                 ),
-              ),
+                const SizedBox(height: 16),
 
-              const SizedBox(height: 12),
-
-              // 金币与投资
-              _buildNumberField('金币数量', _coinCtrl),
-              _buildNumberField('投资次数', _touziCtrl),
-              _buildNumberField('货币投资次数', _touzi2Ctrl),
-
-              const Divider(height: 32),
-
-              const Text(
-                '道具剩余次数',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-
-              _buildNumberField('樱桃炸弹', _coinYingtaoCtrl),
-              _buildNumberField('阳光精灵球', _sunPokeCtrl),
-              _buildNumberField('僵尸精灵球', _zmPokeCtrl),
-              _buildNumberField('天降礼盒', _tianjiangCtrl),
-
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _saveData,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange[700],
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                // 初始阳光
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          '初始阳光购买次数',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextFormField(
+                          controller: _chushisunCtrl,
+                          decoration: const InputDecoration(
+                            labelText: '购买次数 (≥0)',
+                          ),
+                          keyboardType: TextInputType.number,
+                          validator: (v) =>
+                              (int.tryParse(v ?? '') ?? -1) < 0 ? '必须≥0' : null,
+                          onChanged: (sun) => setState(() {
+                            _data = _data.copyWith(
+                              chushisun: int.tryParse(sun),
+                            );
+                          }),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '当前初始阳光：$initialSunlight',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: const Text('保存存档'),
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 20),
+
+                // 金币与投资
+                const Text(
+                  '金币与投资',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                _buildNumberFieldsRow(
+                  _buildNumberField('金币数量', _coinCtrl),
+                  _buildNumberField('投资次数', _touziCtrl),
+                ),
+                const SizedBox(height: 12),
+                _buildNumberFieldsRow(
+                  _buildNumberField('货币投资次数', _touzi2Ctrl),
+                  const SizedBox(),
+                ),
+
+                const Divider(height: 40),
+
+                const Text(
+                  '道具剩余次数',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+
+                _buildNumberFieldsRow(
+                  _buildNumberField('樱桃炸弹', _coinYingtaoCtrl),
+                  _buildNumberField('阳光精灵球', _sunPokeCtrl),
+                ),
+                const SizedBox(height: 12),
+                _buildNumberFieldsRow(
+                  _buildNumberField('僵尸精灵球', _zmPokeCtrl),
+                  _buildNumberField('天降礼盒', _tianjiangCtrl),
+                ),
+
+                const SizedBox(height: 40),
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _saveData,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange[700],
+                      foregroundColor: Colors.white,
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    child: const Text(
+                      '保存存档',
+                      style: TextStyle(fontFamily: "Microsoft YaHei UI"),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  Widget _buildNumberFieldsRow(Widget field1, Widget field2) {
+    return Row(
+      children: [
+        Expanded(child: field1),
+        const SizedBox(width: 12),
+        Expanded(child: field2),
+      ],
+    );
+  }
+
   Widget _buildNumberField(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-        ),
-        keyboardType: TextInputType.number,
-        validator: (v) => (int.tryParse(v ?? '') ?? -1) < 0 ? '不能为负数' : null,
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
       ),
+      keyboardType: TextInputType.number,
+      validator: (v) => (int.tryParse(v ?? '') ?? -1) < 0 ? '不能为负数' : null,
     );
   }
 }
