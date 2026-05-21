@@ -1,0 +1,148 @@
+import 'package:flutter/material.dart';
+
+import 'package:pvzmdz_editor/widgets/common.dart';
+
+class DesktopSaveEditorPage extends StatelessWidget {
+  const DesktopSaveEditorPage({
+    super.key,
+    required this.chushisunCard,
+    required this.coinController,
+    required this.touziController,
+    required this.touzi2Controller,
+    required this.coinYingtaoController,
+    required this.sunPokeController,
+    required this.zmPokeController,
+    required this.tianjiangController,
+    required this.onUnlockAllPlants,
+    required this.onSave,
+  });
+
+  final Widget chushisunCard;
+  final TextEditingController coinController;
+  final TextEditingController touziController;
+  final TextEditingController touzi2Controller;
+  final TextEditingController coinYingtaoController;
+  final TextEditingController sunPokeController;
+  final TextEditingController zmPokeController;
+  final TextEditingController tianjiangController;
+  final VoidCallback onUnlockAllPlants;
+  final VoidCallback onSave;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1320),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 4,
+                child: _DesktopPanel(
+                  title: '数值修改',
+                  subtitle: null,
+                  children: [
+                    chushisunCard,
+                    const SizedBox(height: 16),
+                    SectionHeader(title: '金币与投资'),
+                    const SizedBox(height: 12),
+                    TwoColumnFields(
+                      first: NumberField(
+                        label: '金币数量',
+                        controller: coinController,
+                      ),
+                      second: NumberField(
+                        label: '投资次数',
+                        controller: touziController,
+                      ),
+                      third: NumberField(
+                        label: '货币投资次数',
+                        controller: touzi2Controller,
+                      ),
+                      fourth: const SizedBox.shrink(),
+                    ),
+                    const SizedBox(height: 16),
+                    SectionHeader(title: '道具剩余次数'),
+                    const SizedBox(height: 12),
+                    TwoColumnFields(
+                      first: NumberField(
+                        label: '樱桃炸弹',
+                        controller: coinYingtaoController,
+                      ),
+                      second: NumberField(
+                        label: '阳光精灵球',
+                        controller: sunPokeController,
+                      ),
+                      third: NumberField(
+                        label: '僵尸精灵球',
+                        controller: zmPokeController,
+                      ),
+                      fourth: NumberField(
+                        label: '天降礼盒',
+                        controller: tianjiangController,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                flex: 2,
+                child: _DesktopPanel(
+                  title: '存档操作',
+                  subtitle: null,
+                  children: [
+                    ActionButtons(
+                      onUnlockAllPlants: onUnlockAllPlants,
+                      onSave: onSave,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DesktopPanel extends StatelessWidget {
+  const _DesktopPanel({
+    required this.title,
+    required this.subtitle,
+    required this.children,
+  });
+
+  final String title;
+  final String? subtitle;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            if (subtitle != null) const SizedBox(height: 6),
+            if (subtitle != null)
+              Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 30),
+            ...children,
+          ],
+        ),
+      ),
+    );
+  }
+}

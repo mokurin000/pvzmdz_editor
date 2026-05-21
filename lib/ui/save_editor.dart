@@ -6,7 +6,8 @@ import 'package:logger/logger.dart';
 
 import 'package:pvzmdz_editor/game_data.dart';
 import 'package:pvzmdz_editor/platform_io/io.dart';
-import 'package:pvzmdz_editor/widgets/common.dart';
+import 'package:pvzmdz_editor/ui/pages/desktop.dart';
+import 'package:pvzmdz_editor/ui/pages/mobile.dart';
 import 'package:pvzmdz_editor/widgets/sun_initial.dart';
 
 final logger = Logger(filter: DevelopmentFilter());
@@ -242,7 +243,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
     if (isDesktop) {
       return KeyedSubtree(
         key: pageKey,
-        child: _DesktopSaveEditorPage(
+        child: DesktopSaveEditorPage(
           chushisunCard: chushisunCard,
           coinController: _coinCtrl,
           touziController: _touziCtrl,
@@ -259,7 +260,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
 
     return KeyedSubtree(
       key: pageKey,
-      child: _MobileSaveEditorPage(
+      child: MobileSaveEditorPage(
         chushisunCard: chushisunCard,
         coinController: _coinCtrl,
         touziController: _touziCtrl,
@@ -367,249 +368,6 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class _MobileSaveEditorPage extends StatelessWidget {
-  const _MobileSaveEditorPage({
-    required this.chushisunCard,
-    required this.coinController,
-    required this.touziController,
-    required this.touzi2Controller,
-    required this.coinYingtaoController,
-    required this.sunPokeController,
-    required this.zmPokeController,
-    required this.tianjiangController,
-    required this.onUnlockAllPlants,
-    required this.onSave,
-  });
-
-  final Widget chushisunCard;
-  final TextEditingController coinController;
-  final TextEditingController touziController;
-  final TextEditingController touzi2Controller;
-  final TextEditingController coinYingtaoController;
-  final TextEditingController sunPokeController;
-  final TextEditingController zmPokeController;
-  final TextEditingController tianjiangController;
-  final VoidCallback onUnlockAllPlants;
-  final VoidCallback onSave;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const SectionHeader(title: '数值修改'),
-          const SizedBox(height: 12),
-          chushisunCard,
-          const SizedBox(height: 20),
-          const SectionHeader(title: '金币与投资'),
-          const SizedBox(height: 12),
-          TwoColumnFields(
-            first: NumberField(label: '金币数量', controller: coinController),
-            second: NumberField(label: '投资次数', controller: touziController),
-          ),
-          const SizedBox(height: 12),
-          TwoColumnFields(
-            first: NumberField(label: '货币投资次数', controller: touzi2Controller),
-            second: const SizedBox.shrink(),
-          ),
-          const SizedBox(height: 20),
-          const SectionHeader(title: '道具剩余次数'),
-          const SizedBox(height: 12),
-          TwoColumnFields(
-            first: NumberField(
-              label: '樱桃炸弹',
-              controller: coinYingtaoController,
-            ),
-            second: NumberField(label: '阳光精灵球', controller: sunPokeController),
-          ),
-          const SizedBox(height: 12),
-          TwoColumnFields(
-            first: NumberField(label: '僵尸精灵球', controller: zmPokeController),
-            second: NumberField(label: '天降礼盒', controller: tianjiangController),
-          ),
-          const SizedBox(height: 24),
-          ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),
-        ],
-      ),
-    );
-  }
-}
-
-class _DesktopSaveEditorPage extends StatelessWidget {
-  const _DesktopSaveEditorPage({
-    required this.chushisunCard,
-    required this.coinController,
-    required this.touziController,
-    required this.touzi2Controller,
-    required this.coinYingtaoController,
-    required this.sunPokeController,
-    required this.zmPokeController,
-    required this.tianjiangController,
-    required this.onUnlockAllPlants,
-    required this.onSave,
-  });
-
-  final Widget chushisunCard;
-  final TextEditingController coinController;
-  final TextEditingController touziController;
-  final TextEditingController touzi2Controller;
-  final TextEditingController coinYingtaoController;
-  final TextEditingController sunPokeController;
-  final TextEditingController zmPokeController;
-  final TextEditingController tianjiangController;
-  final VoidCallback onUnlockAllPlants;
-  final VoidCallback onSave;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1320),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 4,
-                child: _DesktopPanel(
-                  title: '数值修改',
-                  subtitle: null,
-                  children: [
-                    chushisunCard,
-                    const SizedBox(height: 16),
-                    SectionHeader(title: '金币与投资'),
-                    const SizedBox(height: 12),
-                    TwoColumnFields(
-                      first: NumberField(
-                        label: '金币数量',
-                        controller: coinController,
-                      ),
-                      second: NumberField(
-                        label: '投资次数',
-                        controller: touziController,
-                      ),
-                      third: NumberField(
-                        label: '货币投资次数',
-                        controller: touzi2Controller,
-                      ),
-                      fourth: const SizedBox.shrink(),
-                    ),
-                    const SizedBox(height: 16),
-                    SectionHeader(title: '道具剩余次数'),
-                    const SizedBox(height: 12),
-                    TwoColumnFields(
-                      first: NumberField(
-                        label: '樱桃炸弹',
-                        controller: coinYingtaoController,
-                      ),
-                      second: NumberField(
-                        label: '阳光精灵球',
-                        controller: sunPokeController,
-                      ),
-                      third: NumberField(
-                        label: '僵尸精灵球',
-                        controller: zmPokeController,
-                      ),
-                      fourth: NumberField(
-                        label: '天降礼盒',
-                        controller: tianjiangController,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                flex: 2,
-                child: _DesktopPanel(
-                  title: '存档操作',
-                  subtitle: null,
-                  children: [
-                    ActionButtons(
-                      onUnlockAllPlants: onUnlockAllPlants,
-                      onSave: onSave,
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DesktopPanel extends StatelessWidget {
-  const _DesktopPanel({
-    required this.title,
-    required this.subtitle,
-    required this.children,
-  });
-
-  final String title;
-  final String? subtitle;
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            if (subtitle != null) const SizedBox(height: 6),
-            if (subtitle != null)
-              Text(subtitle!, style: Theme.of(context).textTheme.bodyMedium),
-            const SizedBox(height: 30),
-            ...children,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DesktopSummaryCard extends StatelessWidget {
-  const _DesktopSummaryCard({required this.title, required this.body});
-
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 8),
-          Text(body),
-        ],
       ),
     );
   }
