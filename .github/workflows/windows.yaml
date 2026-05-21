@@ -1,0 +1,68 @@
+name: 🛠 Windows CI / Build & Release EXE
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - /assets
+      - /windows
+      - /lib
+      - /pubspec.yaml
+      - /pubspec.lock
+
+    tags: ["v*.*.*"]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write # allow creating/updating Releases & uploading assets
+  actions: read # allow pulling marketplace actions
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_release:
+    runs-on: windows-latest
+
+    steps:
+      - name: 📂 Checkout code
+        uses: actions/checkout@v6
+
+      - name: 🚀 Cache pub deps
+        uses: actions/cache@v5
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: 🦋 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: 📥 Get dependencies
+        run: flutter pub get
+
+      - name: 🚧 Codegen
+        run: dart run build_runner build
+
+      - name: 🏗️ Build EXE
+        run: flutter build windows --release
+
+      - name: 📦 Prepare artifacts
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          cp build/windows/x64/runner/Release/*.exe artifacts/
+
+      # ─────────────── ONLY ON TAGS ───────────────
+      - name: 🏷️ Create or update Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          artifacts: artifacts/*.exe
