@@ -257,11 +257,10 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
                           switchInCurve: Curves.easeInOut,
                           switchOutCurve: Curves.easeInOut,
                           transitionBuilder: (child, animation) {
-                            final offsetAnimation =
-                                Tween<Offset>(
-                                  begin: const Offset(0.06, 0),
-                                  end: Offset.zero,
-                                ).animate(animation);
+                            final offsetAnimation = Tween<Offset>(
+                              begin: const Offset(0.06, 0),
+                              end: Offset.zero,
+                            ).animate(animation);
 
                             return FadeTransition(
                               opacity: animation,
@@ -308,7 +307,7 @@ class ChushisunCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '初始阳光购买次数',
+              '初始阳光: $initialSunlight',
               style: Theme.of(
                 context,
               ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
@@ -317,45 +316,15 @@ class ChushisunCard extends StatelessWidget {
             TextFormField(
               controller: controller,
               decoration: const InputDecoration(
-                labelText: '购买次数 (>=0)',
+                labelText: '购买次数',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
               validator: (value) =>
-                  (int.tryParse(value ?? '') ?? -1) < 0 ? '必须>=0' : null,
+                  int.tryParse(value ?? '') == null ? '无效数字' : null,
               onChanged: onChanged,
             ),
-            const SizedBox(height: 14),
-            _SunlightPreview(value: initialSunlight),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SunlightPreview extends StatelessWidget {
-  const _SunlightPreview({required this.value});
-
-  final int value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFFE7F3FF), Color(0xFFD4E7FF)],
-        ),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Text(
-        '当前初始阳光：$value',
-        style: const TextStyle(
-          fontSize: 16,
-          color: Color(0xFF1565C0),
-          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -413,13 +382,19 @@ class _MobileSaveEditorPage extends StatelessWidget {
           const _SectionHeader(title: '道具剩余次数'),
           const SizedBox(height: 12),
           _TwoColumnFields(
-            first: _NumberField(label: '樱桃炸弹', controller: coinYingtaoController),
+            first: _NumberField(
+              label: '樱桃炸弹',
+              controller: coinYingtaoController,
+            ),
             second: _NumberField(label: '阳光精灵球', controller: sunPokeController),
           ),
           const SizedBox(height: 12),
           _TwoColumnFields(
             first: _NumberField(label: '僵尸精灵球', controller: zmPokeController),
-            second: _NumberField(label: '天降礼盒', controller: tianjiangController),
+            second: _NumberField(
+              label: '天降礼盒',
+              controller: tianjiangController,
+            ),
           ),
           const SizedBox(height: 24),
           _ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),
