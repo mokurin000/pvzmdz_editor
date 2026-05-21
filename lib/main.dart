@@ -1,6 +1,9 @@
+import 'dart:io' as io;
+
 import 'package:flutter/material.dart';
 
 import 'package:pvzmdz_editor/save_editor.dart';
+import 'package:pvzmdz_editor/shizuku_guard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -38,7 +41,9 @@ class MyApp extends StatelessWidget {
 
       themeMode: ThemeMode.system, // ← 自动跟随系统暗色/亮色主题
 
-      home: const SaveEditorScreen(),
+      home: io.Platform.isAndroid
+          ? const ShizukuGuardPage()
+          : const SaveEditorScreen(),
     );
   }
 }

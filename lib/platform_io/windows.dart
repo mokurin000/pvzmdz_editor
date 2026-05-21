@@ -51,9 +51,35 @@ class WindowsPlatform extends IOApi {
 
   @override
   Future<void> writeGameSaveData(String gameData) async {
-    await io.File(gameDataPath).writeAsString(gameData);
+    try {
+      await io.File(gameDataPath).writeAsString(gameData);
+    } on io.PathAccessException catch (error, stackTrace) {
+      logger.e(
+        'Access denied while writing save data: $gameDataPath',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    } on io.FileSystemException catch (error, stackTrace) {
+      logger.e(
+        'IO error while writing save data: $gameDataPath',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
+
     try {
       await io.File(gameMD5Path).delete();
-    } on io.PathNotFoundException {}
+    } on io.PathNotFoundException {
+      return;
+    } on io.FileSystemException catch (error, stackTrace) {
+      logger.e(
+        'IO error while deleting checksum file: $gameMD5Path',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      rethrow;
+    }
   }
 }

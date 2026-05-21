@@ -40,20 +40,57 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   }
 
   Future<void> _loadData() async {
-    final rawData = await readGameSaveData();
-    final data = rawData != null
-        ? GameData.fromJson(jsonDecode(rawData))
-        : GameData.defaultData();
+    try {
+      final rawData = await readGameSaveData();
+      final data = rawData != null
+          ? GameData.fromJson(jsonDecode(rawData))
+          : GameData.defaultData();
 
-    if (!mounted) {
-      return;
-    }
+      if (!mounted) {
+        return;
+      }
 
-    setState(() {
-      _data = data;
-      _isLoading = false;
+      setState(() {
+        _data = data;
+        _isLoading = false;
+      });
       _syncControllers(data);
-    });
+    } catch (error, stackTrace) {
+      logger.e(
+        'Failed to load save data.',
+        error: error,
+        stackTrace: stackTrace,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      final fallbackData = GameData.defaultData();
+      setState(() {
+        _data = fallbackData;
+        _isLoading = false;
+      });
+      _syncControllers(fallbackData);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '读取存档失败：$error',
+              style: const TextStyle(
+                fontFamily: "Microsoft YaHei UI",
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      });
+    }
   }
 
   void _syncControllers(GameData data) {
@@ -91,25 +128,49 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       chuizhitongbu: false,
     );
 
-    await writeGameSaveData(jsonEncode(newData.toJson()));
+    try {
+      await writeGameSaveData(jsonEncode(newData.toJson()));
+      if (!mounted) {
+        return;
+      }
 
-    if (!mounted) {
-      return;
-    }
-
-    setState(() => _data = newData);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '存档修改成功！',
-          style: TextStyle(
-            fontFamily: "Microsoft YaHei UI",
-            fontWeight: FontWeight(700),
+      setState(() => _data = newData);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '存档修改成功！',
+            style: TextStyle(
+              fontFamily: "Microsoft YaHei UI",
+              fontWeight: FontWeight.w700,
+            ),
           ),
+          backgroundColor: Colors.green,
         ),
-        backgroundColor: Colors.green,
-      ),
-    );
+      );
+    } catch (error, stackTrace) {
+      logger.e(
+        'Failed to save data.',
+        error: error,
+        stackTrace: stackTrace,
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '保存失败：$error',
+            style: const TextStyle(
+              fontFamily: "Microsoft YaHei UI",
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   void _unlockAllPlants() {
