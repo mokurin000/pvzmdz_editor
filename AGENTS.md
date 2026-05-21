@@ -1,8 +1,17 @@
-## 环境与工具使用规范
+## 通用 Agent 工作原则
+
+1. 始终 遵守上述文件读取规则。
+2. 所有 Dart 代码必须符合 Effective Dart idiomatic 风格。
+3. 生成代码前先思考项目上下文和现有代码风格。
+4. 优先提供清晰、可维护、符合语言习惯的实现。
+5. 如需修改现有文件，必须 先正确读取文件内容（使用 bash）。
+6. 禁止将实现细节、设计准则、显而易见的使用说明等作为 UI 实体加入，这些属于内部细节。
+
+如有疑问，请先确认环境工具使用方式。
 
 ### rg 使用规范
 
-调用 rg 时，为避免 " 转义问题，总是直接调用 rg -n "...|..."
+调用 rg 时，为避免 " 转义问题，总是直接调用 rg.exe 。
 
 bad:
 
@@ -22,10 +31,16 @@ Windows 路径同时支持 `/` 和 `\` ，但 `\\` 更容易引起问题。
 
 ### Bash calling
 
+* NEVER use bash to call powershell commands like write-output.
+
 good:
 
 ```bash
-bash.exe -c "..."
+# read `lib/main.dart`
+bash.exe -c "cat 'lib/main.dart'"
+
+# read `lib/main.dart`, L10~L20
+bash.exe -c "sed -n '10,20p' lib/main.dart"
 ```
 
 bad:
@@ -135,14 +150,3 @@ if (maybeName case final name?) {
 - 避免 过长的函数（建议单个函数不超过 30-40 行）。
 - 使用 extension 方法增强现有类型。
 - 错误处理优先使用 Either / Result 类型或明确的异常（视项目而定）。
-
-## 通用 Agent 工作原则
-
-1. 始终 遵守上述文件读取规则。
-2. 所有 Dart 代码必须符合 Effective Dart idiomatic 风格。
-3. 生成代码前先思考项目上下文和现有代码风格。
-4. 优先提供清晰、可维护、符合语言习惯的实现。
-5. 如需修改现有文件，必须 先正确读取文件内容（使用 bash）。
-6. 禁止将实现细节、设计准则、显而易见的使用说明等作为 UI 实体加入，这些属于内部细节。
-
-如有疑问，请先确认环境工具使用方式。

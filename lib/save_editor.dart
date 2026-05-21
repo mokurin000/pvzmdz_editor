@@ -6,6 +6,7 @@ import 'package:logger/logger.dart';
 
 import 'package:pvzmdz_editor/game_data.dart';
 import 'package:pvzmdz_editor/platform_io/io.dart';
+import 'package:pvzmdz_editor/widgets/common.dart';
 
 final logger = Logger(filter: DevelopmentFilter());
 
@@ -466,41 +467,38 @@ class _MobileSaveEditorPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _SectionHeader(title: '数值修改'),
+          const SectionHeader(title: '数值修改'),
           const SizedBox(height: 12),
           chushisunCard,
           const SizedBox(height: 20),
-          const _SectionHeader(title: '金币与投资'),
+          const SectionHeader(title: '金币与投资'),
           const SizedBox(height: 12),
-          _TwoColumnFields(
-            first: _NumberField(label: '金币数量', controller: coinController),
-            second: _NumberField(label: '投资次数', controller: touziController),
+          TwoColumnFields(
+            first: NumberField(label: '金币数量', controller: coinController),
+            second: NumberField(label: '投资次数', controller: touziController),
           ),
           const SizedBox(height: 12),
-          _TwoColumnFields(
-            first: _NumberField(label: '货币投资次数', controller: touzi2Controller),
+          TwoColumnFields(
+            first: NumberField(label: '货币投资次数', controller: touzi2Controller),
             second: const SizedBox.shrink(),
           ),
           const SizedBox(height: 20),
-          const _SectionHeader(title: '道具剩余次数'),
+          const SectionHeader(title: '道具剩余次数'),
           const SizedBox(height: 12),
-          _TwoColumnFields(
-            first: _NumberField(
+          TwoColumnFields(
+            first: NumberField(
               label: '樱桃炸弹',
               controller: coinYingtaoController,
             ),
-            second: _NumberField(label: '阳光精灵球', controller: sunPokeController),
+            second: NumberField(label: '阳光精灵球', controller: sunPokeController),
           ),
           const SizedBox(height: 12),
-          _TwoColumnFields(
-            first: _NumberField(label: '僵尸精灵球', controller: zmPokeController),
-            second: _NumberField(
-              label: '天降礼盒',
-              controller: tianjiangController,
-            ),
+          TwoColumnFields(
+            first: NumberField(label: '僵尸精灵球', controller: zmPokeController),
+            second: NumberField(label: '天降礼盒', controller: tianjiangController),
           ),
           const SizedBox(height: 24),
-          _ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),
+          ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),
         ],
       ),
     );
@@ -550,40 +548,40 @@ class _DesktopSaveEditorPage extends StatelessWidget {
                   children: [
                     chushisunCard,
                     const SizedBox(height: 16),
-                    _SectionHeader(title: '金币与投资'),
+                    SectionHeader(title: '金币与投资'),
                     const SizedBox(height: 12),
-                    _TwoColumnFields(
-                      first: _NumberField(
+                    TwoColumnFields(
+                      first: NumberField(
                         label: '金币数量',
                         controller: coinController,
                       ),
-                      second: _NumberField(
+                      second: NumberField(
                         label: '投资次数',
                         controller: touziController,
                       ),
-                      third: _NumberField(
+                      third: NumberField(
                         label: '货币投资次数',
                         controller: touzi2Controller,
                       ),
                       fourth: const SizedBox.shrink(),
                     ),
                     const SizedBox(height: 16),
-                    _SectionHeader(title: '道具剩余次数'),
+                    SectionHeader(title: '道具剩余次数'),
                     const SizedBox(height: 12),
-                    _TwoColumnFields(
-                      first: _NumberField(
+                    TwoColumnFields(
+                      first: NumberField(
                         label: '樱桃炸弹',
                         controller: coinYingtaoController,
                       ),
-                      second: _NumberField(
+                      second: NumberField(
                         label: '阳光精灵球',
                         controller: sunPokeController,
                       ),
-                      third: _NumberField(
+                      third: NumberField(
                         label: '僵尸精灵球',
                         controller: zmPokeController,
                       ),
-                      fourth: _NumberField(
+                      fourth: NumberField(
                         label: '天降礼盒',
                         controller: tianjiangController,
                       ),
@@ -598,7 +596,7 @@ class _DesktopSaveEditorPage extends StatelessWidget {
                   title: '存档操作',
                   subtitle: null,
                   children: [
-                    _ActionButtons(
+                    ActionButtons(
                       onUnlockAllPlants: onUnlockAllPlants,
                       onSave: onSave,
                     ),
@@ -676,114 +674,6 @@ class _DesktopSummaryCard extends StatelessWidget {
           Text(body),
         ],
       ),
-    );
-  }
-}
-
-class _ActionButtons extends StatelessWidget {
-  const _ActionButtons({required this.onUnlockAllPlants, required this.onSave});
-
-  final VoidCallback onUnlockAllPlants;
-  final VoidCallback onSave;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: onUnlockAllPlants,
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.blueAccent,
-              side: const BorderSide(color: Colors.blueAccent),
-              minimumSize: const Size.fromHeight(54),
-            ),
-            child: const Text('解锁全卡'),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: onSave,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
-              foregroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(54),
-            ),
-            child: const Text('保存存档'),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: Theme.of(
-        context,
-      ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-    );
-  }
-}
-
-class _TwoColumnFields extends StatelessWidget {
-  const _TwoColumnFields({
-    required this.first,
-    required this.second,
-    this.third,
-    this.fourth,
-  });
-
-  final Widget first;
-  final Widget second;
-  final Widget? third;
-  final Widget? fourth;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: first),
-        const SizedBox(width: 12),
-        Expanded(child: second),
-        if (third != null) ...[
-          const SizedBox(width: 12),
-          Expanded(child: third!),
-        ],
-        if (fourth != null) ...[
-          const SizedBox(width: 12),
-          Expanded(child: fourth!),
-        ],
-      ],
-    );
-  }
-}
-
-class _NumberField extends StatelessWidget {
-  const _NumberField({required this.label, required this.controller});
-
-  final String label;
-  final TextEditingController controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-      ),
-      keyboardType: TextInputType.number,
-      validator: (value) =>
-          (int.tryParse(value ?? '') ?? -1) < 0 ? '不能为负数' : null,
     );
   }
 }
