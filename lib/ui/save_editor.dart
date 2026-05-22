@@ -112,7 +112,6 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   Future<void> _handleAppBarAction(_AppBarAction action) async {
     switch (action) {
       case _AppBarAction.reload:
-        _isLoading = true;
         await _loadData();
         break;
       case _AppBarAction.sourceRepository:
