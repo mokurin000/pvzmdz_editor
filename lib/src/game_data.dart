@@ -155,7 +155,7 @@ class GameData {
   /// 平板模式
   final bool pingban;
 
-  /// 普通无尽模式当前层数
+  /// 冒险模式无尽当前层数
   final int wujinceng;
 
   /// 限定抽卡无尽当前层数
