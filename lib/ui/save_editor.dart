@@ -394,16 +394,39 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
             ),
           ],
         ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            final viewportWidth = constraints.maxWidth < _minScreenWidth
-                ? _minScreenWidth
-                : constraints.maxWidth;
-            final viewportHeight = constraints.maxHeight < _minScreenHeight
-                ? _minScreenHeight
-                : constraints.maxHeight;
+        body: SafeArea(
+          top: false,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final viewportWidth = constraints.maxWidth < _minScreenWidth
+                  ? _minScreenWidth
+                  : constraints.maxWidth;
+              final viewportHeight = constraints.maxHeight < _minScreenHeight
+                  ? _minScreenHeight
+                  : constraints.maxHeight;
 
-            if (_isLoading) {
+              if (_isLoading) {
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(
+                    width: viewportWidth,
+                    child: SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: _minScreenWidth,
+                          minHeight: viewportHeight,
+                        ),
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              // DON'T TOUCH, UI trick
+              final isDesktop =
+                  constraints.maxWidth / 1.5 > constraints.maxHeight;
+
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
@@ -414,59 +437,39 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
                         minWidth: _minScreenWidth,
                         minHeight: viewportHeight,
                       ),
-                      child: const Center(child: CircularProgressIndicator()),
-                    ),
-                  ),
-                ),
-              );
-            }
-
-            // DON'T TOUCH, UI trick
-            final isDesktop =
-                constraints.maxWidth / 1.5 > constraints.maxHeight;
-
-            return SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SizedBox(
-                width: viewportWidth,
-                child: SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minWidth: _minScreenWidth,
-                      minHeight: viewportHeight,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: AnimatedSize(
-                        duration: _panelSwitchDuration,
-                        curve: Curves.easeInOutCubic,
-                        child: AnimatedSwitcher(
+                      child: Form(
+                        key: _formKey,
+                        child: AnimatedSize(
                           duration: _panelSwitchDuration,
-                          switchInCurve: Curves.easeInOutBack,
-                          switchOutCurve: Curves.easeInOutBack,
-                          transitionBuilder: (child, animation) {
-                            final offsetAnimation = Tween<Offset>(
-                              begin: const Offset(0.06, 0),
-                              end: Offset.zero,
-                            ).animate(animation);
+                          curve: Curves.easeInOutCubic,
+                          child: AnimatedSwitcher(
+                            duration: _panelSwitchDuration,
+                            switchInCurve: Curves.easeInOutBack,
+                            switchOutCurve: Curves.easeInOutBack,
+                            transitionBuilder: (child, animation) {
+                              final offsetAnimation = Tween<Offset>(
+                                begin: const Offset(0.06, 0),
+                                end: Offset.zero,
+                              ).animate(animation);
 
-                            return FadeTransition(
-                              opacity: animation,
-                              child: SlideTransition(
-                                position: offsetAnimation,
-                                child: child,
-                              ),
-                            );
-                          },
-                          child: _buildEditorPage(isDesktop: isDesktop),
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: offsetAnimation,
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: _buildEditorPage(isDesktop: isDesktop),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
     );

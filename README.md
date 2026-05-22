@@ -6,7 +6,13 @@
 
 ## Android
 
-在使用 Android 版本之前，你必须先安装并启动 [Shizuku](https://shizuku.rikka.app/)。随后在提示时授予本应用权限。
+[Shizuku]: https://shizuku.rikka.app/
+
+在使用 Android 版本之前，你必须先安装并启动 [Shizuku]。随后在提示时授予本应用权限。
+
+注意，由于 Shizuku 基于运行 daemon 时所在的用户运行，且本项目不打算引入 root-only 命令，您无法在 Shizuku 与本应用、抽卡版用户不同时使用。
+
+具体来说， `/data/media/${userId}` 是唯一一种 User 无关的可靠存储目录，但其需要 media_rw 组。
 
 ## 开发
 
