@@ -7,10 +7,6 @@ permissions:
   contents: write # allow creating/updating Releases & uploading assets
   actions: read # allow pulling marketplace actions
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   build_and_release:
     runs-on: ubuntu-latest

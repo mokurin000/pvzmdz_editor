@@ -17,10 +17,6 @@ permissions:
   contents: write
   actions: read
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   windows:
     uses: ./.github/workflows/windows.yaml
