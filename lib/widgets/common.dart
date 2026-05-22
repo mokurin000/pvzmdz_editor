@@ -3,7 +3,11 @@ library;
 import 'package:flutter/material.dart';
 
 class ActionButtons extends StatelessWidget {
-  const ActionButtons({super.key, required this.onUnlockAllPlants, required this.onSave});
+  const ActionButtons({
+    super.key,
+    required this.onUnlockAllPlants,
+    required this.onSave,
+  });
 
   final VoidCallback onUnlockAllPlants;
   final VoidCallback onSave;
@@ -57,7 +61,8 @@ class SectionHeader extends StatelessWidget {
 }
 
 class TwoColumnFields extends StatelessWidget {
-  const TwoColumnFields({super.key, 
+  const TwoColumnFields({
+    super.key,
     required this.first,
     required this.second,
     this.third,
@@ -104,8 +109,16 @@ class NumberField extends StatelessWidget {
         border: const OutlineInputBorder(),
       ),
       keyboardType: TextInputType.number,
-      validator: (value) =>
-          (int.tryParse(value ?? '') ?? -1) < 0 ? '不能为负数' : null,
+      validator: (value) {
+        if (value == "" || value == null) {
+          return '不能为空';
+        }
+        if (int.tryParse(value) == null) {
+          return '无效数字';
+        }
+
+        return null;
+      },
     );
   }
 }

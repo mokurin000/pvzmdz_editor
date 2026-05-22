@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:pvzmdz_editor/game_data.dart';
 import 'package:pvzmdz_editor/platform_io/io.dart';
@@ -11,6 +13,8 @@ import 'package:pvzmdz_editor/ui/pages/mobile.dart';
 import 'package:pvzmdz_editor/widgets/sun_initial.dart';
 
 final logger = Logger(filter: DevelopmentFilter());
+
+enum _AppBarAction { reload, sourceRepository, exit }
 
 class SaveEditorScreen extends StatefulWidget {
   const SaveEditorScreen({super.key});
@@ -103,6 +107,38 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
         );
       });
     }
+  }
+
+  Future<void> _handleAppBarAction(_AppBarAction action) async {
+    switch (action) {
+      case _AppBarAction.reload:
+        await _loadData();
+        break;
+      case _AppBarAction.sourceRepository:
+        await _openSourceRepository();
+        break;
+      case _AppBarAction.exit:
+        if (io.Platform.isAndroid) {
+          await SystemNavigator.pop(animated: true);
+        } else {
+          io.exit(0);
+        }
+        break;
+    }
+  }
+
+  Future<void> _openSourceRepository() async {
+    final uri = Uri.parse('https://github.com/mokurin000/pvzmdz_editor/');
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (launched || !mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('无法打开源码仓库'),
+      ),
+    );
   }
 
   void _syncControllers(GameData data) {
@@ -343,6 +379,27 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
           title: const Text('抽卡版存档修改器'),
           centerTitle: true,
           backgroundColor: Colors.blue,
+          actions: [
+            PopupMenuButton<_AppBarAction>(
+              tooltip: '应用菜单',
+              icon: const Icon(Icons.more_vert),
+              onSelected: _handleAppBarAction,
+              itemBuilder: (context) => const [
+                PopupMenuItem(
+                  value: _AppBarAction.reload,
+                  child: Text('撤销修改'),
+                ),
+                PopupMenuItem(
+                  value: _AppBarAction.sourceRepository,
+                  child: Text('源码仓库'),
+                ),
+                PopupMenuItem(
+                  value: _AppBarAction.exit,
+                  child: Text('退出程序'),
+                ),
+              ],
+            ),
+          ],
         ),
         body: LayoutBuilder(
           builder: (context, constraints) {
