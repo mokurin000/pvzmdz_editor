@@ -99,7 +99,7 @@ Future<void> writeGameSaveDataImpl(String gameData) async {
   await _ensureShizukuReady();
   await io.File(_gameSaveLocalPath).writeAsString(gameData, flush: true);
   await _runCommandChecked(
-    "cp -f $_gameSaveLocalPath $_gameSaveSourcePath; rm -f $_gameSaveSourceMd5Path",
+    "mv -f $_gameSaveLocalPath $_gameSaveSourcePath; rm -f $_gameSaveSourceMd5Path",
   );
 }
 
