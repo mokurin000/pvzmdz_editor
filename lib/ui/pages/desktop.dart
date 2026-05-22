@@ -14,6 +14,13 @@ class DesktopSaveEditorPage extends StatelessWidget {
     required this.sunPokeController,
     required this.zmPokeController,
     required this.tianjiangController,
+    required this.maoxianController,
+    required this.maoxianIfaController,
+    required this.maoxianSnowController,
+    required this.wujincengController,
+    required this.wujinceng2Controller,
+    required this.wujinceng2LastController,
+    required this.wujinceng3Controller,
     required this.onUnlockAllPlants,
     required this.onSave,
   });
@@ -27,6 +34,13 @@ class DesktopSaveEditorPage extends StatelessWidget {
   final TextEditingController sunPokeController;
   final TextEditingController zmPokeController;
   final TextEditingController tianjiangController;
+  final TextEditingController maoxianController;
+  final TextEditingController maoxianIfaController;
+  final TextEditingController maoxianSnowController;
+  final TextEditingController wujincengController;
+  final TextEditingController wujinceng2Controller;
+  final TextEditingController wujinceng2LastController;
+  final TextEditingController wujinceng3Controller;
   final VoidCallback onUnlockAllPlants;
   final VoidCallback onSave;
 
@@ -87,6 +101,44 @@ class DesktopSaveEditorPage extends StatelessWidget {
                       fourth: NumberField(
                         label: '天降礼盒',
                         controller: tianjiangController,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SectionHeader(title: '关卡进度'),
+                    const SizedBox(height: 12),
+                    TwoColumnFields(
+                      first: NumberField(
+                        label: '冒险模式',
+                        controller: maoxianController,
+                      ),
+                      second: NumberField(
+                        label: 'Snow模式',
+                        controller: maoxianSnowController,
+                      ),
+                      third: NumberField(
+                        label: 'IFA模式',
+                        controller: maoxianIfaController,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SectionHeader(title: '无尽层数'),
+                    const SizedBox(height: 12),
+                    TwoColumnFields(
+                      first: NumberField(
+                        label: '冒险模式',
+                        controller: wujincengController,
+                      ),
+                      second: NumberField(
+                        label: '抽卡当前',
+                        controller: wujinceng2Controller,
+                      ),
+                      third: NumberField(
+                        label: '抽卡最高',
+                        controller: wujinceng2LastController,
+                      ),
+                      fourth: NumberField(
+                        label: 'IFA模式',
+                        controller: wujinceng3Controller,
                       ),
                     ),
                   ],

@@ -34,6 +34,13 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   final _sunPokeCtrl = TextEditingController();
   final _zmPokeCtrl = TextEditingController();
   final _tianjiangCtrl = TextEditingController();
+  final _maoxianCtrl = TextEditingController();
+  final _maoxianIfaCtrl = TextEditingController();
+  final _maoxianSnowCtrl = TextEditingController();
+  final _wujincengCtrl = TextEditingController();
+  final _wujinceng2Ctrl = TextEditingController();
+  final _wujinceng2LastCtrl = TextEditingController();
+  final _wujinceng3Ctrl = TextEditingController();
 
   GameData? _data;
   bool _isLoading = true;
@@ -108,6 +115,13 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
     _sunPokeCtrl.text = data.sunPokeCishu.toString();
     _zmPokeCtrl.text = data.zmPokeCishu.toString();
     _tianjiangCtrl.text = data.tianjianglihe.toString();
+    _maoxianCtrl.text = data.Maoxian.toString();
+    _maoxianIfaCtrl.text = data.MaoxianIFA.toString();
+    _maoxianSnowCtrl.text = data.MaoxianSnow.toString();
+    _wujincengCtrl.text = data.wujinceng.toString();
+    _wujinceng2Ctrl.text = data.wujinceng2.toString();
+    _wujinceng2LastCtrl.text = data.wujinceng2Last.toString();
+    _wujinceng3Ctrl.text = data.wujinceng3.toString();
   }
 
   int get initialSunlight => 50 + 25 * (_data?.chushisun ?? 0);
@@ -132,6 +146,13 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       sunPokeCishu: int.tryParse(_sunPokeCtrl.text) ?? 0,
       zmPokeCishu: int.tryParse(_zmPokeCtrl.text) ?? 0,
       tianjianglihe: int.tryParse(_tianjiangCtrl.text) ?? 0,
+      Maoxian: int.tryParse(_maoxianCtrl.text) ?? 0,
+      MaoxianIFA: int.tryParse(_maoxianIfaCtrl.text) ?? 0,
+      MaoxianSnow: int.tryParse(_maoxianSnowCtrl.text) ?? 0,
+      wujinceng: int.tryParse(_wujincengCtrl.text) ?? 0,
+      wujinceng2: int.tryParse(_wujinceng2Ctrl.text) ?? 0,
+      wujinceng2Last: int.tryParse(_wujinceng2LastCtrl.text) ?? 0,
+      wujinceng3: int.tryParse(_wujinceng3Ctrl.text) ?? 0,
       chuizhitongbu: false,
     );
 
@@ -220,6 +241,13 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
     _sunPokeCtrl.dispose();
     _zmPokeCtrl.dispose();
     _tianjiangCtrl.dispose();
+    _maoxianCtrl.dispose();
+    _maoxianIfaCtrl.dispose();
+    _maoxianSnowCtrl.dispose();
+    _wujincengCtrl.dispose();
+    _wujinceng2Ctrl.dispose();
+    _wujinceng2LastCtrl.dispose();
+    _wujinceng3Ctrl.dispose();
     super.dispose();
   }
 
@@ -257,6 +285,13 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
           sunPokeController: _sunPokeCtrl,
           zmPokeController: _zmPokeCtrl,
           tianjiangController: _tianjiangCtrl,
+          maoxianController: _maoxianCtrl,
+          maoxianIfaController: _maoxianIfaCtrl,
+          maoxianSnowController: _maoxianSnowCtrl,
+          wujincengController: _wujincengCtrl,
+          wujinceng2Controller: _wujinceng2Ctrl,
+          wujinceng2LastController: _wujinceng2LastCtrl,
+          wujinceng3Controller: _wujinceng3Ctrl,
           onUnlockAllPlants: _unlockAllPlants,
           onSave: _saveData,
         ),
@@ -275,6 +310,13 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
         sunPokeController: _sunPokeCtrl,
         zmPokeController: _zmPokeCtrl,
         tianjiangController: _tianjiangCtrl,
+        maoxianController: _maoxianCtrl,
+        maoxianIfaController: _maoxianIfaCtrl,
+        maoxianSnowController: _maoxianSnowCtrl,
+        wujincengController: _wujincengCtrl,
+        wujinceng2Controller: _wujinceng2Ctrl,
+        wujinceng2LastController: _wujinceng2LastCtrl,
+        wujinceng3Controller: _wujinceng3Ctrl,
         onUnlockAllPlants: _unlockAllPlants,
         onSave: _saveData,
       ),
