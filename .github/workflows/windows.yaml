@@ -19,7 +19,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/AppData/Local/Pub/Cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: ${{ runner.os }}-pub-
 
       - name: 🦋 Setup Flutter
