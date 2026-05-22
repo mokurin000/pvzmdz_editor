@@ -100,18 +100,12 @@ class MobileSaveEditorPage extends StatelessWidget {
           const SizedBox(height: 12),
           TwoColumnFields(
             first: NumberField(label: '冒险模式', controller: wujincengController),
-            second: NumberField(
-              label: '抽卡当前',
-              controller: wujinceng2Controller,
-            ),
-            third: NumberField(
-              label: '抽卡最高',
-              controller: wujinceng2LastController,
-            ),
-            fourth: NumberField(
-              label: 'IFA模式',
-              controller: wujinceng3Controller,
-            ),
+            second: NumberField(label: '抽卡当前', controller: wujinceng2Controller),
+          ),
+          const SizedBox(height: 12),
+          TwoColumnFields(
+            first: NumberField(label: '抽卡最高', controller: wujinceng2LastController),
+            second: NumberField(label: 'IFA模式', controller: wujinceng3Controller),
           ),
           const SizedBox(height: 24),
           ActionButtons(onUnlockAllPlants: onUnlockAllPlants, onSave: onSave),

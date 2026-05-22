@@ -112,6 +112,7 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
   Future<void> _handleAppBarAction(_AppBarAction action) async {
     switch (action) {
       case _AppBarAction.reload:
+        _isLoading = true;
         await _loadData();
         break;
       case _AppBarAction.sourceRepository:
@@ -134,11 +135,9 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
       return;
     }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('无法打开源码仓库'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('无法打开源码仓库')));
   }
 
   void _syncControllers(GameData data) {
@@ -385,18 +384,12 @@ class _SaveEditorScreenState extends State<SaveEditorScreen> {
               icon: const Icon(Icons.more_vert),
               onSelected: _handleAppBarAction,
               itemBuilder: (context) => const [
-                PopupMenuItem(
-                  value: _AppBarAction.reload,
-                  child: Text('撤销修改'),
-                ),
+                PopupMenuItem(value: _AppBarAction.reload, child: Text('重载存档')),
                 PopupMenuItem(
                   value: _AppBarAction.sourceRepository,
                   child: Text('源码仓库'),
                 ),
-                PopupMenuItem(
-                  value: _AppBarAction.exit,
-                  child: Text('退出程序'),
-                ),
+                PopupMenuItem(value: _AppBarAction.exit, child: Text('退出程序')),
               ],
             ),
           ],
