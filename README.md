@@ -1,6 +1,6 @@
 # pvzmdz_editor
 
-《植物大战僵尸抽卡版》存档编辑器。
+[《植物大战僵尸抽卡版》](https://space.bilibili.com/167141989/dynamic)存档编辑器。
 
 编译好的程序可于 [CI](https://github.com/mokurin000/pvzmdz_editor/actions/workflows/ci.yaml) 下载。
 
